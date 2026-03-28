@@ -134,7 +134,7 @@ export function SatelliteCompare({
             // 3. Propiedades faltantes para resolver el error TS2345:
             layer: 'MODIS_Terra_CorrectedReflectance_TrueColor',
             dataset: 'NASA GIBS',
-            palette_info: {}
+            palette_info: ''
         })
 
         /* ── CÓDIGO ORIGINAL COMENTADO PARA EVITAR EL LLAMADO AL API ──
