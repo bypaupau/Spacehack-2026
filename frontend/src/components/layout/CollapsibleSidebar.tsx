@@ -3,7 +3,7 @@
 // Cambios: Escala de fuente aumentada (13px para títulos) para equilibrar con el layout
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { History, MapPin, CalendarDays } from 'lucide-react'
+import { History, MapPin, CalendarDays, BookOpen, FlaskConical } from 'lucide-react'
 import type { Analysis, VerdictType } from '../../types'
 import { MOCK_ANALYSES } from '../../data/mockAnalyses'
 
@@ -11,6 +11,8 @@ interface CollapsibleSidebarProps {
   open:             boolean
   onSelectAnalysis: (a: Analysis) => void
   selectedId?:      string
+  activePage?:      'verify' | 'sources' | 'methodology'
+  onNavigate?:      (page: 'verify' | 'sources' | 'methodology') => void
 }
 
 const VERDICT_CONFIG: Record<VerdictType, { color: string; label: string; bar: string }> = {
@@ -39,7 +41,7 @@ function ScorePill({ score, verdict }: { score: number; verdict: VerdictType }) 
   )
 }
 
-export function CollapsibleSidebar({ open, onSelectAnalysis, selectedId }: CollapsibleSidebarProps) {
+export function CollapsibleSidebar({ open, onSelectAnalysis, selectedId, activePage = 'verify', onNavigate }: CollapsibleSidebarProps) {
   const today = new Date()
 
   const formatDate = (iso: string) => {
@@ -128,6 +130,38 @@ export function CollapsibleSidebar({ open, onSelectAnalysis, selectedId }: Colla
               )
             })}
           </ul>
+
+          {/* ── Nav links (útiles en móvil donde el topbar los oculta) ── */}
+          <div style={{ marginTop: '8px', borderTop: '1px solid #F0F4FA', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            {([
+              { id: 'sources'     as const, label: 'Sources',     Icon: BookOpen      },
+              { id: 'methodology' as const, label: 'Methodology', Icon: FlaskConical  },
+            ]).map(({ id, label, Icon }) => {
+              const isActive = activePage === id
+              return (
+                <button
+                  key={id}
+                  onClick={() => onNavigate?.(id)}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: '10px',
+                    width: '100%', textAlign: 'left',
+                    background: isActive ? '#EEF2F7' : 'transparent',
+                    border: 'none', borderRadius: '8px',
+                    padding: '10px 12px', cursor: 'pointer',
+                    color: isActive ? '#0D1F38' : '#4A5A72',
+                    transition: 'background 0.15s',
+                  }}
+                  onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = 'rgba(238,242,247,0.7)' }}
+                  onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = 'transparent' }}
+                >
+                  <Icon size={13} strokeWidth={2.2} />
+                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', fontWeight: isActive ? 700 : 500, letterSpacing: '0.07em', textTransform: 'uppercase' }}>
+                    {label}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
 
           {/* Footer */}
           <div style={{ marginTop: '24px', padding: '14px', borderRadius: '10px', background: '#EEF2F7' }}>

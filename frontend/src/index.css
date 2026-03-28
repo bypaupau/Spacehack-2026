@@ -227,5 +227,42 @@ html, body {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border-dark); border-radius: 4px; }
 
+/* ── Responsive — Mobile first (≤768px) ────────────────────────────────────── */
+
+/* Grid de resultados: dos columnas en desktop, una en móvil */
+.results-grid {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 20px;
+  align-items: start;
+}
+
+/* Topbar: ocultar nav central y badge "Live" en móvil */
+.topbar-nav  { display: flex; gap: 32px; height: 100%; }
+.topbar-live { display: flex; align-items: center; gap: 8px; }
+
+@media (max-width: 768px) {
+  /* Grid colapsa a una sola columna */
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Columna derecha (panel de fuentes/satélite) aparece al final, sin sticky */
+  .results-right-col {
+    position: static !important;
+  }
+
+  /* Topbar: sólo logo + hamburger */
+  .topbar-nav,
+  .topbar-live {
+    display: none;
+  }
+
+  /* El logo no muestra el subtítulo "Alpine Fact Checker" en móvil */
+  .topbar-subtitle {
+    display: none;
+  }
+}
+
 /* ── Selection ─────────────────────────────────────────────────────────────── */
 ::selection { background: rgba(29, 78, 216, 0.12); color: var(--ink); }

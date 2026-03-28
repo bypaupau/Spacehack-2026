@@ -49,6 +49,8 @@ export default function App() {
                     open={sidebarOpen}
                     onSelectAnalysis={handleHistorySelect}
                     selectedId={externalResult?.id}
+                    activePage={activePage}
+                    onNavigate={p => setActivePage(p as Page)}
                 />
 
                 <main style={{ flex: 1, minWidth: 0, position: 'relative' }}>

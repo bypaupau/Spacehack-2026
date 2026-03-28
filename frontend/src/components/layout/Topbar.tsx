@@ -54,7 +54,7 @@ export function Topbar({ activePage = 'verify', onNavigate, onLogoClick, sidebar
             <span style={{ fontFamily: "'Playfair Display', serif", fontWeight: 600, fontSize: '18px', letterSpacing: '-0.02em', color: '#0F172A', lineHeight: 1 }}>
               Peak News
             </span>
-                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '8px', color: '#64748B', letterSpacing: '0.12em', textTransform: 'uppercase', marginTop: '3px' }}>
+                        <span className="topbar-subtitle" style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '8px', color: '#64748B', letterSpacing: '0.12em', textTransform: 'uppercase', marginTop: '3px' }}>
               Alpine Fact Checker
             </span>
                     </div>
@@ -62,7 +62,7 @@ export function Topbar({ activePage = 'verify', onNavigate, onLogoClick, sidebar
             </div>
 
             {/* Centro: Navegación estilo Tabs editoriales */}
-            <nav className="flex gap-8 h-full">
+            <nav className="topbar-nav">
                 {NAV.map(item => {
                     const isActive = activePage === item.id;
                     return (
@@ -93,7 +93,7 @@ export function Topbar({ activePage = 'verify', onNavigate, onLogoClick, sidebar
             </nav>
 
             {/* Derecha: Estado */}
-            <div className="flex items-center gap-2">
+            <div className="topbar-live">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse-soft" />
                 <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#64748B', fontWeight: 500 }}>
           Live · Alpes

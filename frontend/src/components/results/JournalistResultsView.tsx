@@ -738,7 +738,7 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
       {/* ── SOURCE CARD ──────────────────────────────────────────────────────── */}
       <SourceCard analysis={analysis} />
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '20px', alignItems: 'start' }}>
+      <div className="results-grid">
 
         {/* ════════ COLUMNA PRINCIPAL ════════ */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -943,7 +943,7 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
         </div>
 
         {/* ════════ COLUMNA DERECHA ════════ */}
-        <div style={{ position: 'sticky', top: '72px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div className="results-right-col" style={{ position: 'sticky', top: '72px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
 
           {/* ── SOURCES TRIGGER — top of sidebar, opens right-side drawer ──── */}
           <SourcesTrigger sources={sources} onOpen={() => setSourcesOpen(true)} />
