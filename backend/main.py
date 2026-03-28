@@ -1,12 +1,13 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-# Asegúrate de importar tus servicios
-# from gee_service import get_satellite_evidence, resolve_location, classify_claim, ALPINE_LOCATIONS
-# from chart_service import generate_trend_chart_base64
+# Descomentamos esto para que el motor GEE y Matplotlib funcionen de verdad
+from gee_service import get_satellite_evidence, resolve_location, classify_claim, ALPINE_LOCATIONS
+from chart_service import generate_trend_chart_base64
 from journal_service import get_related_journals
 
 app = FastAPI()
 
+# ¡Faltaba esto! Es vital para que FastAPI entienda el JSON que envía React
 class AnalyzeRequest(BaseModel):
     news_text: str
 
@@ -32,7 +33,6 @@ def analyze(body: AnalyzeRequest):
                 break
 
         # 2. Extracción Empírica (GEE)
-        # ACÁ ESTABA EL ERROR DE TIEMPO REAL: Actualizado a 2025 (último verano completo)
         evidence_data = get_satellite_evidence(
             claim_text=text,
             location_str=location_name,
