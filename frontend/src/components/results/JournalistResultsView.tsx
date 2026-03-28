@@ -27,10 +27,10 @@ import { TrendChart }       from '../map/TrendChart'
 const VC: Record<VerdictType, {
   label: string; Icon: LucideIcon; color: string; bg: string; stripe: string
 }> = {
-  false:      { label: 'FALSO',      Icon: AlertTriangle, color: '#B91C1C', bg: '#FFF5F5', stripe: '#C0392B' },
-  verified:   { label: 'VERIFICADO', Icon: CheckCircle2,  color: '#065F46', bg: '#F0FDF9', stripe: '#059669' },
-  misleading: { label: 'ENGAÑOSO',   Icon: AlertCircle,   color: '#92400E', bg: '#FFFBEB', stripe: '#D97706' },
-  pending:    { label: 'ANALIZANDO', Icon: Clock,         color: '#4A5A72', bg: '#F5F7FA', stripe: '#8FA3BF' },
+  false:      { label: 'FALSE',      Icon: AlertTriangle, color: '#B91C1C', bg: '#FFF5F5', stripe: '#C0392B' },
+  verified:   { label: 'VERIFIED',   Icon: CheckCircle2,  color: '#065F46', bg: '#F0FDF9', stripe: '#059669' },
+  misleading: { label: 'MISLEADING', Icon: AlertCircle,   color: '#92400E', bg: '#FFFBEB', stripe: '#D97706' },
+  pending:    { label: 'ANALYSING',  Icon: Clock,         color: '#4A5A72', bg: '#F5F7FA', stripe: '#8FA3BF' },
 }
 
 const floatCard: React.CSSProperties = {
@@ -74,14 +74,14 @@ function SourceCard({ analysis }: { analysis: Analysis }) {
             <p style={{ margin: 0, fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '14px', fontWeight: 700, color: '#0D1F38' }}>{sc.username}</p>
             <p style={{ margin: 0, fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', color: '#8FA3BF' }}>{sc.handle} · {sc.postedAt}</p>
           </div>
-          <span style={{ marginLeft: 'auto', fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', color: '#8FA3BF', letterSpacing: '0.07em', textTransform: 'uppercase' }}>Post original · analizado</span>
+          <span style={{ marginLeft: 'auto', fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', color: '#8FA3BF', letterSpacing: '0.07em', textTransform: 'uppercase' }}>Original post · analysed</span>
         </div>
         <p style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '15px', color: '#1A2E47', lineHeight: 1.65, margin: '0 0 14px 0' }}>{sc.content}</p>
         <div style={{ display: 'flex', gap: '18px', paddingTop: '10px', borderTop: '1px solid #F0F0F0' }}>
           {[
-            { Icon: Repeat2, val: sc.retweets?.toLocaleString('es-ES') ?? '—', label: 'Reposts' },
-            { Icon: Heart,   val: sc.likes?.toLocaleString('es-ES')    ?? '—', label: 'Likes'   },
-            { Icon: MessageCircle, val: sc.replies?.toLocaleString('es-ES')  ?? '—', label: 'Replies' },
+            { Icon: Repeat2, val: sc.retweets?.toLocaleString('en-GB') ?? '—', label: 'Reposts' },
+            { Icon: Heart,   val: sc.likes?.toLocaleString('en-GB')    ?? '—', label: 'Likes'   },
+            { Icon: MessageCircle, val: sc.replies?.toLocaleString('en-GB')  ?? '—', label: 'Replies' },
           ].map(m => (
             <span key={m.label} style={{ display: 'flex', alignItems: 'center', gap: '5px', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '13px', color: '#4A5A72' }}>
               <m.Icon size={13} strokeWidth={1.8} color="#8FA3BF" />
@@ -90,7 +90,7 @@ function SourceCard({ analysis }: { analysis: Analysis }) {
             </span>
           ))}
           <a href={input} target="_blank" rel="noopener noreferrer" style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '4px', color: '#1D4ED8', fontSize: '11px', fontFamily: "'IBM Plex Sans', sans-serif", textDecoration: 'none' }}>
-            <ExternalLink size={11} /> Ver post
+            <ExternalLink size={11} /> View post
           </a>
         </div>
       </div>
@@ -109,12 +109,12 @@ function SourceCard({ analysis }: { analysis: Analysis }) {
         <div style={{ display: 'flex', gap: '16px', paddingTop: '10px', borderTop: '1px solid #F5EDE8' }}>
           <span style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '13px', color: '#4A5A72', fontFamily: "'IBM Plex Sans', sans-serif" }}>
             <ArrowUp size={13} strokeWidth={1.8} color="#C2410C" />
-            <strong style={{ color: '#0D1F38' }}>{sc.upvotes?.toLocaleString('es-ES')}</strong>
+            <strong style={{ color: '#0D1F38' }}>{sc.upvotes?.toLocaleString('en-GB')}</strong>
             <span style={{ color: '#8FA3BF', fontSize: '11px' }}>upvotes</span>
           </span>
           <span style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '13px', color: '#4A5A72', fontFamily: "'IBM Plex Sans', sans-serif" }}>
             <MessageCircle size={13} strokeWidth={1.8} color="#8FA3BF" />
-            <strong style={{ color: '#0D1F38' }}>{sc.comments?.toLocaleString('es-ES')}</strong>
+            <strong style={{ color: '#0D1F38' }}>{sc.comments?.toLocaleString('en-GB')}</strong>
             <span style={{ color: '#8FA3BF', fontSize: '11px' }}>comments</span>
           </span>
         </div>
@@ -131,7 +131,7 @@ function SourceCard({ analysis }: { analysis: Analysis }) {
           <span style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '11px', color: '#8FA3BF' }}>{sc.publication} · {sc.publishedAt}</span>
           {sc.author && <span style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '11px', color: '#8FA3BF' }}>· {sc.author}</span>}
           <a href={input} target="_blank" rel="noopener noreferrer" style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '4px', color: '#1D4ED8', fontSize: '11px', fontFamily: "'IBM Plex Sans', sans-serif", textDecoration: 'none', whiteSpace: 'nowrap' }}>
-            <ExternalLink size={11} /> Ver artículo
+            <ExternalLink size={11} /> View article
           </a>
         </div>
         {sc.excerpt && (
@@ -147,7 +147,7 @@ function SourceCard({ analysis }: { analysis: Analysis }) {
   return (
     <div style={{ ...floatCard, padding: '18px 22px', marginBottom: '16px', background: '#F8FAFC' }}>
       <p style={{ margin: '0 0 10px 0', fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', color: '#8FA3BF', textTransform: 'uppercase', letterSpacing: '0.09em', fontWeight: 700 }}>
-        Afirmación analizada
+        Analysed claim
       </p>
       <blockquote style={{ margin: 0, padding: '12px 16px', background: '#EEF2F7', borderRadius: '8px', fontFamily: "'Playfair Display', serif", fontSize: '16px', color: '#1E293B', lineHeight: 1.65, fontStyle: 'italic' }}>
         "{input}"
@@ -185,7 +185,7 @@ function GEEImagePanel({ beforeUrl, afterUrl, beforeYear, afterYear, location }:
                   GEE · Landsat 8 / Sentinel-2 · {year}
                 </div>
                 <div style={{ position: 'absolute', bottom: '6px', right: '6px', padding: '2px 7px', background: 'rgba(13,31,56,0.70)', borderRadius: '4px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '8px', color: '#8FA3BF' }}>
-                  click para ampliar
+                  click to expand
                 </div>
               </>
             )}
@@ -195,7 +195,7 @@ function GEEImagePanel({ beforeUrl, afterUrl, beforeYear, afterYear, location }:
           onMouseEnter={e => (e.currentTarget.style.background = '#EEF2F7')}
           onMouseLeave={e => (e.currentTarget.style.background = '#F5F7FA')}
         >
-          <ExternalLink size={10} color="#8FA3BF" /> Descargar imagen · {year}
+          <ExternalLink size={10} color="#8FA3BF" /> Download image · {year}
         </button>
       </div>
     )
@@ -204,17 +204,17 @@ function GEEImagePanel({ beforeUrl, afterUrl, beforeYear, afterYear, location }:
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
       <div style={{ padding: '10px 14px', background: '#EFF6FF', borderRadius: '8px' }}>
-        <p style={{ margin: '0 0 2px', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '12px', fontWeight: 700, color: '#0D1F38' }}>Imágenes satelitales reales — Google Earth Engine</p>
+        <p style={{ margin: '0 0 2px', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '12px', fontWeight: 700, color: '#0D1F38' }}>Real satellite imagery — Google Earth Engine</p>
         <p style={{ margin: 0, fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '12px', color: '#4A5A72', lineHeight: 1.5 }}>
-          {location}. BLANCO/AZUL = nieve o hielo · GRIS/MARRÓN = roca expuesta (antes glaciar) · AZUL OSCURO = lago de deshielo formado tras el retroceso.
+          {location}. WHITE/BLUE = snow or ice · GREY/BROWN = exposed rock (formerly glacier) · DARK BLUE = meltwater lake formed after retreat.
         </p>
       </div>
       <div style={{ display: 'flex', gap: '10px', alignItems: 'stretch' }}>
-        <Panel url={beforeUrl} year={beforeYear} label="ANTES"   isAfter={false} />
+        <Panel url={beforeUrl} year={beforeYear} label="BEFORE"  isAfter={false} />
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: '#8FA3BF' }}>
           <ArrowRight size={20} strokeWidth={1.5} />
         </div>
-        <Panel url={afterUrl}  year={afterYear}  label="DESPUÉS" isAfter={true} />
+        <Panel url={afterUrl}  year={afterYear}  label="AFTER"   isAfter={true} />
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '5px 10px', background: '#F5F7FA', borderRadius: '6px' }}>
         <Satellite size={11} color="#8FA3BF" />
@@ -324,7 +324,7 @@ function RelatedMediaSection({ items }: { items: NonNullable<Analysis['relatedMe
     if (t === 'report') return '#F0FDF9'
     return                     '#FFFBEB'
   }
-  const typeLabel = (t: string) => ({ video: 'Video', report: 'Informe', article: 'Artículo' }[t] ?? t)
+  const typeLabel = (t: string) => ({ video: 'Video', report: 'Report', article: 'Article' }[t] ?? t)
   const typeIcon = (t: string) => {
     if (t === 'video')  return <PlayCircle size={11} color={typeColor(t)} />
     if (t === 'report') return <BookOpen   size={11} color={typeColor(t)} />
@@ -333,7 +333,7 @@ function RelatedMediaSection({ items }: { items: NonNullable<Analysis['relatedMe
 
   return (
     <div style={{ ...floatCard, padding: '20px 24px' }}>
-      <SectionLabel icon={Newspaper}>Artículos y Medios Relacionados</SectionLabel>
+      <SectionLabel icon={Newspaper}>Related Articles &amp; Media</SectionLabel>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {items.map((item, i) => (
           <a key={i} href={item.url} target="_blank" rel="noopener noreferrer"
@@ -418,7 +418,7 @@ function SourcesDrawer({ sources, open, onClose }: {
         <div style={{ padding: '20px 22px 16px', borderBottom: '1px solid #F0F4FA', display: 'flex', alignItems: 'center', gap: '10px', position: 'sticky', top: 0, background: '#FFFFFF', zIndex: 1 }}>
           <BookOpen size={15} strokeWidth={2} color="#4A5A72" />
           <span style={{ flex: 1, fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: '#4A5A72', letterSpacing: '0.10em', textTransform: 'uppercase', fontWeight: 800 }}>
-            Fuentes utilizadas
+            Sources used
           </span>
           <button onClick={onClose} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '28px', height: '28px', borderRadius: '6px', background: '#F5F7FA', border: 'none', cursor: 'pointer', transition: 'background 0.14s' }}
             onMouseEnter={e => (e.currentTarget.style.background = '#EEF2F7')}
@@ -434,7 +434,7 @@ function SourcesDrawer({ sources, open, onClose }: {
           {/* Satellite sources */}
           <div>
             <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', color: '#C8D3E0', letterSpacing: '0.07em', textTransform: 'uppercase', fontWeight: 700, marginBottom: '10px' }}>
-              Datos satelitales y monitoreo
+              Satellite data &amp; monitoring
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               {sources.map((src, i) => (
@@ -446,7 +446,7 @@ function SourcesDrawer({ sources, open, onClose }: {
           {/* Trusted repos — indexed journals */}
           <div>
             <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', color: '#C8D3E0', letterSpacing: '0.07em', textTransform: 'uppercase', fontWeight: 700, marginBottom: '10px' }}>
-              Repositorios científicos de referencia
+              Scientific reference repositories
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
               {TRUSTED_JOURNALS.map(j => (
@@ -465,7 +465,7 @@ function SourcesDrawer({ sources, open, onClose }: {
 
           {/* Note */}
           <p style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '12px', color: '#8FA3BF', lineHeight: 1.6, margin: 0 }}>
-            Todas las fuentes son públicas e independientes entre sí. La fiabilidad indicada (%) refleja el nivel de peer-review y replicabilidad según IFCN y CrossRef.
+            All sources are public and independent. The reliability score (%) reflects the level of peer-review and replicability according to IFCN and CrossRef.
           </p>
         </div>
       </div>
@@ -485,7 +485,7 @@ function SourcesTrigger({ sources, onOpen }: { sources: Analysis['sources']; onO
       >
         <BookOpen size={14} strokeWidth={2} color="#4A5A72" />
         <span style={{ flex: 1, fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: '#4A5A72', letterSpacing: '0.10em', textTransform: 'uppercase', fontWeight: 800 }}>
-          Fuentes utilizadas · {sources.length} repositorios + literatura peer-reviewed
+          Sources used · {sources.length} repositories + peer-reviewed literature
         </span>
         <ChevronRight size={15} color="#8FA3BF" />
       </button>
@@ -517,12 +517,12 @@ function IframeWidget({ analysisId }: { analysisId: string }) {
           </span>
         </div>
         <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', color: '#8FA3BF', background: '#F0F4FA', padding: '3px 8px', borderRadius: '4px' }}>
-          Embed para tu redacción
+          Embed for your newsroom
         </span>
       </div>
 
       <p style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '12px', color: '#4A5A72', lineHeight: 1.6, marginBottom: '12px' }}>
-        Copia este código <code style={{ fontFamily: "'IBM Plex Mono', monospace", background: '#F0F4FA', padding: '1px 4px', borderRadius: '3px', fontSize: '11px' }}>&lt;iframe&gt;</code> y pégalo en tu periódico digital para incrustar este fact-check verificado.
+        Copy this <code style={{ fontFamily: "'IBM Plex Mono', monospace", background: '#F0F4FA', padding: '1px 4px', borderRadius: '3px', fontSize: '11px' }}>&lt;iframe&gt;</code> code and paste it into your digital publication to embed this verified fact-check.
       </p>
 
       {/* Code block */}
@@ -550,7 +550,7 @@ function IframeWidget({ analysisId }: { analysisId: string }) {
             transform: copied ? 'scale(0.96)' : 'scale(1)',
           }}
         >
-          {copied ? '✓ Copiado' : 'Copiar'}
+          {copied ? '✓ Copied' : 'Copy'}
         </button>
       </div>
 
@@ -596,10 +596,10 @@ function CitizenTrustPoll({ analysisId }: { analysisId: string }) {
         </div>
         <div>
           <p style={{ margin: '0 0 4px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', color: '#8FA3BF', letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 700 }}>
-            Índice de Confianza Ciudadana
+            Citizen Trust Index
           </p>
           <p style={{ margin: 0, fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '14px', fontWeight: 700, color: '#0D1F38', lineHeight: 1.35 }}>
-            ¿Ver esta imagen satelital cambió tu percepción sobre este tema?
+            Did viewing this satellite image change your perception of this topic?
           </p>
         </div>
       </div>
@@ -620,7 +620,7 @@ function CitizenTrustPoll({ analysisId }: { analysisId: string }) {
             onMouseEnter={e => { const el = e.currentTarget; el.style.background = '#1D4ED8'; el.style.color = '#FFFFFF' }}
             onMouseLeave={e => { const el = e.currentTarget; el.style.background = '#FFFFFF'; el.style.color = '#1D4ED8' }}
           >
-            <ThumbsUp size={15} strokeWidth={2} /> Sí
+            <ThumbsUp size={15} strokeWidth={2} /> Yes
           </button>
           <button
             onClick={() => handleVote('no')}
@@ -642,14 +642,14 @@ function CitizenTrustPoll({ analysisId }: { analysisId: string }) {
         /* Results after voting */
         <div>
           <p style={{ margin: '0 0 12px', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '12px', color: '#4A5A72' }}>
-            Gracias por participar · {total.toLocaleString('es-ES')} respuestas
+            Thank you for participating · {total.toLocaleString('en-GB')} responses
           </p>
 
           {/* Yes bar */}
           <div style={{ marginBottom: '8px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: '5px', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '12px', fontWeight: vote === 'yes' ? 700 : 500, color: vote === 'yes' ? '#1D4ED8' : '#4A5A72' }}>
-                <ThumbsUp size={11} strokeWidth={2} /> Sí {vote === 'yes' && '· tu voto'}
+                <ThumbsUp size={11} strokeWidth={2} /> Yes {vote === 'yes' && '· your vote'}
               </span>
               <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', fontWeight: 700, color: '#1D4ED8' }}>{yesPct}%</span>
             </div>
@@ -662,7 +662,7 @@ function CitizenTrustPoll({ analysisId }: { analysisId: string }) {
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: '5px', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '12px', fontWeight: vote === 'no' ? 700 : 500, color: vote === 'no' ? '#4A5A72' : '#94A3B8' }}>
-                <ThumbsDown size={11} strokeWidth={2} /> No {vote === 'no' && '· tu voto'}
+                <ThumbsDown size={11} strokeWidth={2} /> No {vote === 'no' && '· your vote'}
               </span>
               <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', fontWeight: 700, color: '#94A3B8' }}>{noPct}%</span>
             </div>
@@ -674,7 +674,7 @@ function CitizenTrustPoll({ analysisId }: { analysisId: string }) {
       )}
 
       <p style={{ marginTop: '12px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', color: '#94A3B8', lineHeight: 1.5 }}>
-        Los resultados son anónimos y se usan para mejorar Peak News · Datos simulados en demo
+        Results are anonymous and used to improve Peak News · Simulated data in demo
       </p>
     </div>
   )
@@ -684,7 +684,7 @@ function CitizenTrustPoll({ analysisId }: { analysisId: string }) {
 export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis, onBack?: () => void }) {
   const { verdict, score, headline, summary, claims, satellite, sources, nlp, input, dataStats, richNarrative, relatedMedia } = analysis
   const vc = VC[verdict]; const VerdictIcon = vc.Icon
-  const analyzedDate = new Date(analysis.analyzedAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })
+  const analyzedDate = new Date(analysis.analyzedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
   const hasRealImages = !!(satellite.geeBeforeUrl && satellite.geeAfterUrl)
 
   // ── Sources drawer state ────────────────────────────────────────────────────
@@ -708,10 +708,10 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
 
   // Chart explanations based on chartUrls count
   const chartDescriptions = [
-    { n: 1, text: 'Tendencia anual de cobertura nival (hectáreas). La línea naranja es la regresión lineal que confirma el descenso estadísticamente significativo a lo largo del período de estudio.' },
-    { n: 2, text: 'Cambio neto de inicio vs. final del período. Las barras muestran el volumen inicial (año base) frente al volumen final, con el porcentaje de pérdida neta calculado a partir de los píxeles Landsat 8.' },
-    { n: 3, text: 'Comparación por década. Cada barra agrupa el promedio de cobertura nival de una década completa, permitiendo visualizar la aceleración del declive entre los años 2000 y 2020.' },
-    { n: 4, text: 'Fact-check visual. Mapa de calor generado con GEE que superpone la zona de retroceso glaciar (rojo) sobre la imagen satelital actual. La extensión roja indica el área de roca expuesta donde antes había hielo.' },
+    { n: 1, text: 'Annual snow coverage trend (hectares). The orange line is the linear regression confirming the statistically significant decline across the study period.' },
+    { n: 2, text: 'Net change from start to end of the period. Bars show the baseline volume (base year) versus the final volume, with the net loss percentage calculated from Landsat 8 pixels.' },
+    { n: 3, text: 'Decade-by-decade comparison. Each bar groups the average snow coverage for a full decade, making it possible to visualise the accelerating decline between 2000 and 2020.' },
+    { n: 4, text: 'Visual fact-check. Heat map generated with GEE that overlays the glacier retreat zone (red) on the current satellite image. The red area marks exposed rock where ice previously existed.' },
   ]
 
   return (
@@ -728,7 +728,7 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
             onMouseEnter={e => { const el = e.currentTarget as HTMLButtonElement; el.style.color = '#1D4ED8'; el.style.background = '#EFF6FF' }}
             onMouseLeave={e => { const el = e.currentTarget as HTMLButtonElement; el.style.color = '#8FA3BF'; el.style.background = 'transparent' }}
           >
-            <ArrowLeft size={11} strokeWidth={2.2} /> Nueva verificación
+            <ArrowLeft size={11} strokeWidth={2.2} /> New verification
           </button>
         </div>
       )}
@@ -750,7 +750,7 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
               </span>
               <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '14px', color: vc.color, fontWeight: 700 }}>{score}/100</span>
               <span style={{ marginLeft: 'auto', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '11px', color: '#8FA3BF' }}>
-                Analizado: {analyzedDate}
+                Analysed: {analyzedDate}
               </span>
             </div>
 
@@ -779,7 +779,7 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
 
           {/* ── NARRATIVE — Perplexity-style, data-dense with citations ─────── */}
           <div style={{ ...floatCard, padding: '22px 28px' }}>
-            <SectionLabel icon={Brain}>Análisis</SectionLabel>
+            <SectionLabel icon={Brain}>Analysis</SectionLabel>
             {richNarrative
               ? <RichNarrative text={richNarrative} />
               : <p style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '15.5px', color: '#1A2E47', lineHeight: 1.70, margin: 0 }}>{summary}</p>
@@ -788,19 +788,19 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
 
           {/* ── SATELLITE IMAGES ─────────────────────────────────────────────── */}
           <div style={{ ...floatCard, padding: '20px 24px' }}>
-            <SectionLabel icon={Satellite}>Evidencia Satelital · Comparación Temporal</SectionLabel>
+            <SectionLabel icon={Satellite}>Satellite Evidence · Temporal Comparison</SectionLabel>
             {hasRealImages ? (
               <GEEImagePanel
                 beforeUrl={satellite.geeBeforeUrl!}
                 afterUrl={satellite.geeAfterUrl!}
                 beforeYear={satellite.geeBeforeYear ?? satellite.baselineYear}
                 afterYear={satellite.geeAfterYear ?? 2025}
-                location={satellite.geeLocation ?? satellite.images?.[0]?.location ?? 'Alpes'}
+                location={satellite.geeLocation ?? satellite.images?.[0]?.location ?? 'Alps'}
               />
             ) : (
               <SatelliteCompare
                 claimText={input}
-                location={satellite.images?.[0]?.location ?? 'Alpes Suizos'}
+                location={satellite.images?.[0]?.location ?? 'Swiss Alps'}
                 beforeYear={satellite.baselineYear ?? 1990}
                 afterYear={2024}
               />
@@ -810,9 +810,9 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
           {/* ── CHARTS + NUMBERED EXPLANATIONS (wireframe-inspired) ──────────── */}
           {satellite.chartUrls && satellite.chartUrls.length > 0 && (
             <div style={{ ...floatCard, padding: '20px 24px' }}>
-              <SectionLabel icon={Brain}>Gráficos GEE · Análisis Estadístico</SectionLabel>
+              <SectionLabel icon={Brain}>GEE Charts · Statistical Analysis</SectionLabel>
               <p style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '13px', color: '#4A5A72', marginBottom: '14px', lineHeight: 1.5 }}>
-                Gráficos generados con Google Earth Engine a partir de datos Landsat 8 y Sentinel-2. Desplaza para ver el análisis completo.
+                Charts generated with Google Earth Engine from Landsat 8 and Sentinel-2 data. Scroll to see the full analysis.
               </p>
               {/* Chart gallery — scroll arrows + fade indicator */}
               <div style={{ position: 'relative', marginBottom: '18px' }}>
@@ -835,7 +835,7 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
                 >
                   <style>{`.chart-scroll::-webkit-scrollbar { display: none; }`}</style>
                   {satellite.chartUrls.map((url, i) => (
-                    <img key={i} src={url} alt={`Análisis GEE ${i + 1}`} onClick={() => window.open(url, '_blank')}
+                    <img key={i} src={url} alt={`GEE Analysis ${i + 1}`} onClick={() => window.open(url, '_blank')}
                       style={{ height: '210px', width: 'auto', borderRadius: '10px', flexShrink: 0, cursor: 'zoom-in', boxShadow: '0 1px 4px rgba(13,28,56,0.06)', transition: 'box-shadow 0.15s, transform 0.15s' }}
                       onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 6px 20px rgba(13,28,56,0.12)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
                       onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 1px 4px rgba(13,28,56,0.06)'; e.currentTarget.style.transform = 'translateY(0)' }}
@@ -876,21 +876,21 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
 
           {/* ── HISTORICAL TREND CHART ───────────────────────────────────────── */}
           <div style={{ ...floatCard, padding: '20px 24px' }}>
-            <SectionLabel icon={Brain}>Serie Histórica · Cobertura Nival</SectionLabel>
-            <TrendChart claimText={input} location={satellite.images?.[0]?.location ?? 'Alpes Suizos'} />
+            <SectionLabel icon={Brain}>Historical Series · Snow Coverage</SectionLabel>
+            <TrendChart claimText={input} location={satellite.images?.[0]?.location ?? 'Swiss Alps'} />
           </div>
 
           {/* ── LOCATION MAP ─────────────────────────────────────────────────── */}
           <div style={{ ...floatCard, padding: '20px 24px' }}>
-            <SectionLabel icon={Layers}>{`Localización · ${satellite.images?.[0]?.location ?? 'Alpes'}`}</SectionLabel>
-            <SatelliteMap location={satellite.images?.[0]?.location ?? 'Alpes Suizos'} glacierRetreat={satellite.glacierRetreat} snowCoverage={satellite.snowCoverage} coverageTrend={satellite.coverageTrend} baselineYear={satellite.baselineYear} />
+            <SectionLabel icon={Layers}>{`Location · ${satellite.images?.[0]?.location ?? 'Alps'}`}</SectionLabel>
+            <SatelliteMap location={satellite.images?.[0]?.location ?? 'Swiss Alps'} glacierRetreat={satellite.glacierRetreat} snowCoverage={satellite.snowCoverage} coverageTrend={satellite.coverageTrend} baselineYear={satellite.baselineYear} />
           </div>
 
           {/* ── NLP ANALYSIS ─────────────────────────────────────────────────── */}
           <div style={{ ...floatCard, padding: '22px 28px' }}>
-            <SectionLabel icon={Brain}>Análisis Narrativo · Patrón de Desinformación</SectionLabel>
+            <SectionLabel icon={Brain}>Narrative Analysis · Misinformation Pattern</SectionLabel>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '18px' }}>
-              <span style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '11px', color: '#8FA3BF', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Tipo detectado</span>
+              <span style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '11px', color: '#8FA3BF', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Detected type</span>
               <span style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '13px', fontWeight: 700, color: vc.color, background: vc.bg, borderRadius: '5px', padding: '4px 12px' }}>
                 {nlp.narrativeType}
               </span>
@@ -916,7 +916,7 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
 
           {/* ── CLAIMS ───────────────────────────────────────────────────────── */}
           <div style={{ ...floatCard, padding: '22px 28px' }}>
-            <SectionLabel icon={FileSearch}>Afirmaciones Detectadas</SectionLabel>
+            <SectionLabel icon={FileSearch}>Detected Claims</SectionLabel>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {claims.map((claim, i) => (
                 <div key={claim.id} style={{ display: 'flex', gap: '14px', alignItems: 'flex-start', padding: '13px 15px', borderRadius: '8px', background: vc.bg }}>
@@ -948,12 +948,12 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
 
           {/* Quick satellite stats */}
           <div style={{ ...floatCard, padding: '18px 20px' }}>
-            <SectionLabel icon={Satellite}>Indicadores Satelitales</SectionLabel>
+            <SectionLabel icon={Satellite}>Satellite Indicators</SectionLabel>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {[
-                { label: 'Retroceso glaciar', value: `${satellite.glacierRetreat}%`, note: `desde ${satellite.baselineYear}` },
-                { label: 'Cobertura nival',   value: `${satellite.snowCoverage}%`,   note: 'año actual' },
-                { label: 'Tendencia',         value: `${satellite.coverageTrend > 0 ? '+' : ''}${satellite.coverageTrend}%`, note: `vs. ${satellite.baselineYear}` },
+                { label: 'Glacier retreat', value: `${satellite.glacierRetreat}%`, note: `since ${satellite.baselineYear}` },
+                { label: 'Snow coverage',   value: `${satellite.snowCoverage}%`,   note: 'current year' },
+                { label: 'Trend',           value: `${satellite.coverageTrend > 0 ? '+' : ''}${satellite.coverageTrend}%`, note: `vs. ${satellite.baselineYear}` },
               ].map(m => (
                 <div key={m.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
                   <div>
@@ -968,8 +968,8 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
               {/* NDVI */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
                 <div>
-                  <p style={{ margin: 0, fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '12px', color: '#4A5A72', fontWeight: 500 }}>Índice NDVI</p>
-                  <p style={{ margin: 0, fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', color: '#C8D3E0' }}>vegetación / hielo</p>
+                  <p style={{ margin: 0, fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '12px', color: '#4A5A72', fontWeight: 500 }}>NDVI Index</p>
+                  <p style={{ margin: 0, fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', color: '#C8D3E0' }}>vegetation / ice</p>
                 </div>
                 <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '16px', fontWeight: 800, color: '#1D4ED8' }}>{satellite.ndviIndex}</span>
               </div>
@@ -978,7 +978,7 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
 
           {/* NLP keywords */}
           <div style={{ ...floatCard, padding: '18px 20px' }}>
-            <SectionLabel icon={Brain}>Palabras Clave Detectadas</SectionLabel>
+            <SectionLabel icon={Brain}>Detected Keywords</SectionLabel>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
               {nlp.topKeywords.map(kw => (
                 <span key={kw} style={{ padding: '3px 10px', borderRadius: '20px', background: vc.bg, fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '12px', fontWeight: 600, color: vc.color }}>
@@ -990,13 +990,13 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
 
           {/* Veracity standard scale */}
           <div style={{ ...floatCard, padding: '18px 20px' }}>
-            <SectionLabel icon={AlertCircle}>Escala de Veracidad</SectionLabel>
+            <SectionLabel icon={AlertCircle}>Truthfulness Scale</SectionLabel>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
               {[
-                { min: 80, label: 'Verificado',         color: '#065F46', bg: '#F0FDF9' },
-                { min: 50, label: 'Mayormente cierto',  color: '#0369A1', bg: '#EFF6FF' },
-                { min: 30, label: 'Engañoso',           color: '#92400E', bg: '#FFFBEB' },
-                { min:  0, label: 'Falso',              color: '#B91C1C', bg: '#FFF5F5' },
+                { min: 80, label: 'Verified',       color: '#065F46', bg: '#F0FDF9' },
+                { min: 50, label: 'Mostly true',    color: '#0369A1', bg: '#EFF6FF' },
+                { min: 30, label: 'Misleading',     color: '#92400E', bg: '#FFFBEB' },
+                { min:  0, label: 'False',          color: '#B91C1C', bg: '#FFF5F5' },
               ].map(tier => {
                 const isActive = score >= tier.min && (
                   tier.min === 80 ? score >= 80 :
@@ -1018,7 +1018,7 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
               })}
             </div>
             <p style={{ marginTop: '10px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', color: '#C8D3E0', lineHeight: 1.5 }}>
-              Escala basada en metodología IFCN · International Fact-Checking Network
+              Scale based on IFCN methodology · International Fact-Checking Network
             </p>
           </div>
 

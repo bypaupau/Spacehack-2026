@@ -12,9 +12,9 @@ interface TopbarProps {
 }
 
 const NAV = [
-    { id: 'verify',      label: 'Verificar'   },
-    { id: 'sources',     label: 'Fuentes'     },
-    { id: 'methodology', label: 'Metodología' },
+    { id: 'verify',      label: 'Verify'      },
+    { id: 'sources',     label: 'Sources'     },
+    { id: 'methodology', label: 'Methodology' },
 ] as const
 
 export function Topbar({ activePage = 'verify', onNavigate, onLogoClick, sidebarOpen, onToggleSidebar }: TopbarProps) {

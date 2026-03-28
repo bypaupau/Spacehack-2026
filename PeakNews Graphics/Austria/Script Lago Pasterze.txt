@@ -1,0 +1,110 @@
+// ============================================
+// IBILENS FORMATO: Visualización Color Normal/Real (RGB)
+// Caso de Estudio Internacional: Glaciar Pasterze, AUSTRIA
+// Compara 1990 (Río de Hielo) vs 2025 (Nuevo Lago Proglaciar)
+// ============================================
+
+// 1. Definir la zona exacta del Glaciar Pasterze (Austria)
+var pasterzeCoords = [12.745, 47.075];
+var puntoEstudio = ee.Geometry.Point(pasterzeCoords);
+var areaDeInteres = puntoEstudio.buffer(4000); // 4km de radio para enfocar la lengua y el lago
+
+Map.centerObject(puntoEstudio, 14); // Zoom 14 para ver el detalle del agua
+Map.setOptions('SATELLITE'); 
+
+// ============================================
+// 2. Imagen del PASADO: Landsat 5 (1990) - COLOR REAL
+// ============================================
+var img1990 = ee.ImageCollection('LANDSAT/LT05/C02/T1_TOA')
+  .filterBounds(areaDeInteres)
+  .filterDate('1990-07-01', '1990-09-30') 
+  .filter(ee.Filter.lt('CLOUD_COVER', 20))
+  .median()
+  .clip(areaDeInteres);
+
+// Parámetros de COLOR REAL Landsat 5 (B3, B2, B1)
+var visNormalPast = {
+  bands: ['B3', 'B2', 'B1'],
+  min: 0,
+  max: 0.35, // Ajuste para que la nieve y la roca se vean nítidas
+  gamma: 1.4 
+};
+
+// ============================================
+// 3. Imagen del PRESENTE: Sentinel-2 (2025) - COLOR REAL
+// ============================================
+var img2025 = ee.ImageCollection('COPERNICUS/S2_HARMONIZED')
+  .filterBounds(areaDeInteres)
+  .filterDate('2024-07-01', '2025-09-30') 
+  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 15))
+  .median()
+  .clip(areaDeInteres);
+
+// Parámetros de COLOR REAL Sentinel-2 (B4, B3, B2)
+var visNormalPres = {
+  bands: ['B4', 'B3', 'B2'],
+  min: 0,
+  max: 3200, 
+  gamma: 1.4
+};
+
+// ============================================
+// 4. Crear Interfaz Comparativa (Slider)
+// ============================================
+
+// Mapa izquierdo (Pasado)
+var mapaIzquierdo = ui.Map();
+mapaIzquierdo.centerObject(puntoEstudio, 14);
+mapaIzquierdo.addLayer(img1990, visNormalPast, '1990 (Color Real)');
+mapaIzquierdo.add(ui.Label('1990: Glaciar Pasterze (AUSTRIA)', {
+  position: 'bottom-left', 
+  fontWeight: 'bold',
+  backgroundColor: 'rgba(255, 255, 255, 0.8)',
+  padding: '8px'
+}));
+
+// Mapa derecho (Presente)
+var mapaDerecho = ui.Map();
+mapaDerecho.addLayer(img2025, visNormalPres, '2025 (Color Real)');
+mapaDerecho.add(ui.Label('2025: Nuevo Lago Glaciar', {
+  position: 'bottom-right', 
+  fontWeight: 'bold',
+  backgroundColor: 'rgba(255, 255, 255, 0.8)',
+  padding: '8px'
+}));
+
+// Vincular mapas y Crear Slider
+var vinculador = ui.Map.Linker([mapaIzquierdo, mapaDerecho]);
+var splitPanel = new ui.SplitPanel({
+  firstPanel: vinculador.get(0),
+  secondPanel: vinculador.get(1),
+  wipe: true,
+  style: {stretch: 'both'}
+});
+
+ui.root.widgets().reset([splitPanel]);
+
+// ============================================
+// 5. EXPORTAR A GOOGLE DRIVE (Descargar imágenes Color Real)
+// ============================================
+
+// Exportar la imagen de 1990 (Color Real)
+Export.image.toDrive({
+  // .visualize() hornea los colores naturales en la foto para que no se vea oscura
+  image: img1990.visualize(visNormalPast), 
+  description: 'IbiLens_Pasterze_1990_ColorReal',
+  folder: 'IbiLens_Hackathon', // Se guardará en esta carpeta en tu Drive
+  scale: 10, // Forzamos resolución máxima para que se vea en HD
+  region: areaDeInteres, 
+  maxPixels: 1e13
+});
+
+// Exportar la imagen de 2025 (Color Real)
+Export.image.toDrive({
+  image: img2025.visualize(visNormalPres),
+  description: 'IbiLens_Pasterze_2025_ColorReal',
+  folder: 'IbiLens_Hackathon',
+  scale: 10, 
+  region: areaDeInteres,
+  maxPixels: 1e13
+});

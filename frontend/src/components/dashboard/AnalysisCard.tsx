@@ -30,7 +30,7 @@ const VERDICT_BORDER: Record<string, string> = {
 export function AnalysisCard({ analysis, onSelect, isActive }: AnalysisCardProps) {
   const { verdict, score, headline, summary, analyzedAt } = analysis
 
-  const dateStr = new Date(analyzedAt).toLocaleDateString('es-ES', {
+  const dateStr = new Date(analyzedAt).toLocaleDateString('en-GB', {
     day: 'numeric', month: 'short', year: 'numeric',
   })
 
@@ -81,7 +81,7 @@ export function AnalysisCard({ analysis, onSelect, isActive }: AnalysisCardProps
             className="font-caption text-[9px]"
             style={{ color: dotColor, fontWeight: 600 }}
           >
-            {score} / 100
+            {score}%
           </span>
           <VerdictBadge verdict={verdict} />
         </div>

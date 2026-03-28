@@ -14,7 +14,7 @@ type Page = 'verify' | 'sources' | 'methodology'
 
 export default function App() {
     const [activePage,     setActivePage]     = useState<Page>('verify')
-    const [sidebarOpen,    setSidebarOpen]    = useState(true)
+    const [sidebarOpen,    setSidebarOpen]    = useState(false)
     const [externalResult, setExternalResult] = useState<Analysis | null>(null)
 
     // Este estado es el "truco" para reiniciar la página de inicio
@@ -66,20 +66,20 @@ export default function App() {
                                 onClick={() => setActivePage('verify')}
                                 style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'transparent', border: 'none', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', fontWeight: 600, color: '#8FA3BF', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: '32px', padding: '6px 0' }}
                             >
-                                ← Volver a Verificar
+                                ← Back to Verify
                             </button>
-                            <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: '#8FA3BF', letterSpacing: '0.10em', textTransform: 'uppercase', fontWeight: 800, marginBottom: '12px' }}>Repositorios de datos</p>
-                            <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '36px', fontWeight: 800, color: '#0D1F38', lineHeight: 1.15, marginBottom: '24px', letterSpacing: '-0.01em' }}>Fuentes de Peak News</h1>
+                            <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: '#8FA3BF', letterSpacing: '0.10em', textTransform: 'uppercase', fontWeight: 800, marginBottom: '12px' }}>Data repositories</p>
+                            <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '36px', fontWeight: 800, color: '#0D1F38', lineHeight: 1.15, marginBottom: '24px', letterSpacing: '-0.01em' }}>Peak News Sources</h1>
                             <p style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '15px', color: '#4A5A72', lineHeight: 1.75, marginBottom: '32px' }}>
-                                Peak News cruza cada afirmación contra repositorios satelitales y literatura científica revisada por pares. Todas las fuentes son públicas y verificables de forma independiente.
+                                Peak News cross-references every claim against satellite repositories and peer-reviewed scientific literature. All sources are public and independently verifiable.
                             </p>
                             {[
-                                { name: 'Google Earth Engine (GEE)', type: 'Plataforma satelital', desc: 'Análisis geoespacial sobre Landsat 8/9 (USGS, 30m) y Sentinel-2 (ESA, 10m). Scripts GEE generan índices de cobertura nival, retroceso glaciar y comparaciones temporales.', url: 'https://earthengine.google.com', color: '#1D4ED8' },
-                                { name: 'GLAMOS Switzerland', type: 'Red de monitoreo glaciar', desc: 'Glaciological Monitoring and Reports Switzerland. Mediciones de campo anuales desde 1879. Referencia principal para masa glaciar suiza.', url: 'https://glamos.ch', color: '#065F46' },
-                                { name: 'NASA GIBS / MODIS', type: 'Imágenes satelitales reales', desc: 'Global Imagery Browse Services. MODIS Terra True Color (250m) para comparaciones temporales de nieve/glaciar. Sin autenticación, público.', url: 'https://gibs.earthdata.nasa.gov', color: '#B91C1C' },
-                                { name: 'Copernicus C3S / ERA5', type: 'Datos climáticos', desc: 'Copernicus Climate Change Service. ERA5-Land reanalysis para temperatura y ERA5 para cobertura nival. Referencia ECMWF.', url: 'https://climate.copernicus.eu', color: '#92400E' },
-                                { name: 'IPCC AR6', type: 'Informe científico', desc: 'Sixth Assessment Report del IPCC. Capítulo 12 documenta tendencias de nieve y glaciares alpinos con alta confianza.', url: 'https://ipcc.ch/report/ar6', color: '#0369A1' },
-                                { name: 'WMO / WGMS', type: 'Boletines glaciares', desc: 'World Glacier Monitoring Service. Global Glacier Change Bulletin anual. Principal referencia de pérdida de masa global.', url: 'https://wgms.ch', color: '#276749' },
+                                { name: 'Google Earth Engine (GEE)', type: 'Satellite platform', desc: 'Geospatial analysis over Landsat 8/9 (USGS, 30m) and Sentinel-2 (ESA, 10m). GEE scripts generate snow coverage indices, glacier retreat metrics and temporal comparisons.', url: 'https://earthengine.google.com', color: '#1D4ED8' },
+                                { name: 'GLAMOS Switzerland', type: 'Glacier monitoring network', desc: 'Glaciological Monitoring and Reports Switzerland. Annual field measurements since 1879. Primary reference for Swiss glacier mass balance.', url: 'https://glamos.ch', color: '#065F46' },
+                                { name: 'NASA GIBS / MODIS', type: 'Real satellite imagery', desc: 'Global Imagery Browse Services. MODIS Terra True Color (250m) for temporal snow/glacier comparisons. No authentication required, fully public.', url: 'https://gibs.earthdata.nasa.gov', color: '#B91C1C' },
+                                { name: 'Copernicus C3S / ERA5', type: 'Climate data', desc: 'Copernicus Climate Change Service. ERA5-Land reanalysis for temperature and ERA5 for snow coverage. ECMWF reference dataset.', url: 'https://climate.copernicus.eu', color: '#92400E' },
+                                { name: 'IPCC AR6', type: 'Peer-reviewed scientific report', desc: 'IPCC Sixth Assessment Report. Chapter 12 documents Alpine snow and glacier trends with high confidence.', url: 'https://ipcc.ch/report/ar6', color: '#0369A1' },
+                                { name: 'WMO / WGMS', type: 'Glacier bulletins', desc: 'World Glacier Monitoring Service. Annual Global Glacier Change Bulletin. Primary reference for global glacier mass loss.', url: 'https://wgms.ch', color: '#276749' },
                             ].map(s => (
                                 <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer"
                                     style={{ display: 'flex', gap: '16px', padding: '18px 20px', marginBottom: '10px', borderRadius: '12px', background: '#FFFFFF', boxShadow: '0 1px 4px rgba(13,28,56,0.05), 0 4px 16px rgba(13,28,56,0.04)', textDecoration: 'none', transition: 'box-shadow 0.14s' }}
@@ -103,19 +103,19 @@ export default function App() {
                                 onClick={() => setActivePage('verify')}
                                 style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'transparent', border: 'none', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', fontWeight: 600, color: '#8FA3BF', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: '32px', padding: '6px 0' }}
                             >
-                                ← Volver a Verificar
+                                ← Back to Verify
                             </button>
-                            <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: '#8FA3BF', letterSpacing: '0.10em', textTransform: 'uppercase', fontWeight: 800, marginBottom: '12px' }}>Cómo funciona</p>
-                            <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '36px', fontWeight: 800, color: '#0D1F38', lineHeight: 1.15, marginBottom: '24px', letterSpacing: '-0.01em' }}>Metodología</h1>
+                            <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: '#8FA3BF', letterSpacing: '0.10em', textTransform: 'uppercase', fontWeight: 800, marginBottom: '12px' }}>How it works</p>
+                            <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '36px', fontWeight: 800, color: '#0D1F38', lineHeight: 1.15, marginBottom: '24px', letterSpacing: '-0.01em' }}>Methodology</h1>
                             <p style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '15px', color: '#4A5A72', lineHeight: 1.75, marginBottom: '32px' }}>
-                                Cada verificación combina análisis NLP, datos satelitales GEE y literatura científica indexada para emitir un veredicto en la escala IFCN.
+                                Every verification combines NLP analysis, GEE satellite data and indexed scientific literature to produce a verdict on the IFCN scale.
                             </p>
                             {[
-                                { n: '01', title: 'Extracción de afirmaciones', desc: 'El texto, URL o post se procesa para extraer las afirmaciones verificables. Las afirmaciones se clasifican por tipo: glaciar, cobertura nival o temperatura.' },
-                                { n: '02', title: 'Consulta satelital (GEE)', desc: 'Scripts de Google Earth Engine consultan imágenes Landsat 8 y Sentinel-2. Se calculan índices de cobertura nival (NDSI), retroceso glaciar y comparaciones temporales. Los JSONs resultantes están almacenados en /satellite/ para las áreas Alps monitoreadas.' },
-                                { n: '03', title: 'Cruce con literatura científica', desc: 'Las afirmaciones se comparan contra GLAMOS, IPCC AR6, Hugonnet et al. 2021 (Nature), Fontrodona Bach et al. 2023 (Nature Climate Change) y los boletines WGMS anuales.' },
-                                { n: '04', title: 'Puntuación IFCN', desc: 'El score (0–100) se calcula ponderando: coherencia con datos satelitales (40%), respaldo en literatura peer-reviewed (35%), análisis NLP de narrativa (25%). Los umbrales son: Verificado ≥80, Mayormente cierto 50–79, Engañoso 30–49, Falso <30.' },
-                                { n: '05', title: 'Escala de desinformación NLP', desc: 'Se detectan tres patrones: Negacionismo directo (contradice evidencia), Minimización (selección de datos favorable) y Retardismo (cuestiona urgencia del consenso). Cada patrón se puntúa independientemente.' },
+                                { n: '01', title: 'Claim extraction', desc: 'The text, URL or post is processed to extract verifiable claims. Claims are classified by type: glacier, snow coverage or temperature.' },
+                                { n: '02', title: 'Satellite query (GEE)', desc: 'Google Earth Engine scripts query Landsat 8 and Sentinel-2 imagery. Snow coverage indices (NDSI), glacier retreat and temporal comparisons are computed. Result JSONs are stored in /satellite/ for monitored Alpine areas.' },
+                                { n: '03', title: 'Cross-reference with scientific literature', desc: 'Claims are compared against GLAMOS, IPCC AR6, Hugonnet et al. 2021 (Nature), Fontrodona Bach et al. 2023 (Nature Climate Change) and annual WGMS bulletins.' },
+                                { n: '04', title: 'IFCN scoring', desc: 'The score (0–100) is calculated by weighting: consistency with satellite data (40%), peer-reviewed literature support (35%), NLP narrative analysis (25%). Thresholds: Verified ≥80, Mostly True 50–79, Misleading 30–49, False <30.' },
+                                { n: '05', title: 'NLP misinformation scale', desc: 'Three patterns are detected: Direct denial (contradicts evidence), Minimisation (cherry-picking favourable data) and Delayism (questions urgency of consensus). Each pattern is scored independently.' },
                             ].map(step => (
                                 <div key={step.n} style={{ display: 'flex', gap: '18px', padding: '20px 0', borderBottom: '1px solid #F0F4FA' }}>
                                     <span style={{ flexShrink: 0, fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', fontWeight: 800, color: '#1D4ED8', minWidth: '28px', paddingTop: '2px' }}>{step.n}</span>

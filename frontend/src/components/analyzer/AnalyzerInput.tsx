@@ -16,7 +16,7 @@ function getValidationError(val: string, mode: InputMode, platform: string): str
 
   if (mode === 'article') {
     const isUrl = /^https?:\/\/.{4,}/i.test(trimmed)
-    if (!isUrl) return 'Pega una URL válida que empiece por https://…'
+    if (!isUrl) return 'Paste a valid URL starting with https://…'
   }
 
   if (mode === 'social') {
@@ -25,18 +25,18 @@ function getValidationError(val: string, mode: InputMode, platform: string): str
       : /https?:\/\/(www\.)?(twitter\.com|x\.com)\//i
     if (!validDomains.test(trimmed)) {
       return platform === 'reddit'
-        ? 'Pega un enlace de Reddit (reddit.com/r/…)'
-        : 'Pega un enlace de X / Twitter (x.com o twitter.com)'
+        ? 'Paste a Reddit link (reddit.com/r/…)'
+        : 'Paste an X / Twitter link (x.com or twitter.com)'
     }
   }
 
   if (mode === 'statement') {
-    if (trimmed.length < 12) return 'La afirmación debe tener al menos 12 caracteres'
+    if (trimmed.length < 12) return 'The statement must be at least 12 characters'
     // Detect obvious gibberish: no vowels, no spaces, all non-word chars
     const vowels   = /[aeiouáéíóúüAEIOUÁÉÍÓÚÜ]/
     const hasSpace = trimmed.includes(' ')
     if (!vowels.test(trimmed) && !hasSpace) {
-      return 'Por favor, escribe una afirmación real para verificar'
+      return 'Please enter a real claim to verify'
     }
   }
 
@@ -71,6 +71,72 @@ const MODES: { id: InputMode; label: string; placeholder: string }[] = [
 const SOCIAL_PLATFORMS: { id: 'twitter' | 'reddit'; label: string }[] = [
   { id: 'twitter', label: 'X / Twitter' },
   { id: 'reddit',  label: 'Reddit' },
+]
+
+// ── Demo examples — clickable chips for prototype demo ────────────────────────
+const DEMO_EXAMPLES: {
+  label: string; input: string; mode: InputMode
+  platform?: 'twitter' | 'reddit'
+  modeTag: string; verdictColor: string; verdictBg: string
+}[] = [
+  {
+    label:        'Alpine ski tourism',
+    input:        'Can you still ski in the Alps?',
+    mode:         'statement',
+    modeTag:      'statement',
+    verdictColor: '#92400E',
+    verdictBg:    '#FFFBEB',
+  },
+  {
+    label:        'Mont Blanc losing altitude',
+    input:        'Mont Blanc is losing metres of altitude due to ice melt',
+    mode:         'statement',
+    modeTag:      'statement',
+    verdictColor: '#065F46',
+    verdictBg:    '#F0FDF9',
+  },
+  {
+    label:        'Swiss glaciers growing',
+    input:        'Swiss glaciers are growing in 2025',
+    mode:         'statement',
+    modeTag:      'statement',
+    verdictColor: '#B91C1C',
+    verdictBg:    '#FFF5F5',
+  },
+  {
+    label:        'Record snowfall Switzerland',
+    input:        'Record snowfall in Switzerland proves the climate is not changing',
+    mode:         'statement',
+    modeTag:      'statement',
+    verdictColor: '#92400E',
+    verdictBg:    '#FFFBEB',
+  },
+  {
+    label:        'Article at arctic-truth.net',
+    input:        'https://arctic-truth.net/glaciers-growing-2025',
+    mode:         'article',
+    modeTag:      'article url',
+    verdictColor: '#B91C1C',
+    verdictBg:    '#FFF5F5',
+  },
+  {
+    label:        'Reddit r/climate',
+    input:        'https://reddit.com/r/climate/comments/abc123/record_snowfall',
+    mode:         'social',
+    platform:     'reddit',
+    modeTag:      'reddit',
+    verdictColor: '#92400E',
+    verdictBg:    '#FFFBEB',
+  },
+  {
+    label:        'Tweet @PeakTruth99',
+    input:        'https://x.com/PeakTruth99/status/1234567890',
+    mode:         'social',
+    platform:     'twitter',
+    modeTag:      'x/twitter',
+    verdictColor: '#B91C1C',
+    verdictBg:    '#FFF5F5',
+  },
 ]
 
 // ── Mode pill — filled when active, ghost when not; zero borders ──────────────
@@ -273,7 +339,7 @@ export function AnalyzerInput({ onSubmit, disabled, compact }: AnalyzerInputProp
             }}
           >
             <span style={{ fontSize: '11px', color: '#94A3B8', fontFamily: "'IBM Plex Mono', monospace", alignSelf: 'center' }}>
-              PLATAFORMA:
+              PLATFORM:
             </span>
             {SOCIAL_PLATFORMS.map(p => (
               <button
@@ -362,9 +428,9 @@ export function AnalyzerInput({ onSubmit, disabled, compact }: AnalyzerInputProp
                   <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.35)" strokeWidth="3"/>
                   <path d="M12 2a10 10 0 0 1 10 10" stroke="white" strokeWidth="3" strokeLinecap="round"/>
                 </svg>
-                Analizando
+                Analysing
               </span>
-            ) : 'Verificar →'}
+            ) : 'Verify →'}
           </button>
         </div>
 
@@ -383,15 +449,62 @@ export function AnalyzerInput({ onSubmit, disabled, compact }: AnalyzerInputProp
         )}
       </div>
 
+      {/* ── Demo examples ───────────────────────────────────────────────────── */}
+      <div
+        className="w-full max-w-2xl animate-fade-in"
+        style={{ animationDelay: '0.36s', animationFillMode: 'both', marginTop: '16px' }}
+      >
+        <p style={{
+          fontFamily: "'IBM Plex Mono', monospace", fontSize: '8px',
+          letterSpacing: '0.12em', textTransform: 'uppercase', color: '#CBD5E1',
+          marginBottom: '8px', textAlign: 'center',
+        }}>
+          Available demo cases — click to try
+        </p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', justifyContent: 'center' }}>
+          {DEMO_EXAMPLES.map((ex, i) => (
+            <button
+              key={i}
+              onClick={() => {
+                setValue(ex.input)
+                handleModeChange(ex.mode)
+                if (ex.platform) handlePlatformChange(ex.platform)
+                setInputError(null)
+                setShowError(false)
+              }}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '6px',
+                padding: '5px 11px', borderRadius: '20px', border: 'none', cursor: 'pointer',
+                background: ex.verdictBg, transition: 'opacity 0.15s, transform 0.1s',
+                fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '11px',
+                fontWeight: 500, color: ex.verdictColor,
+              }}
+              onMouseEnter={e => { e.currentTarget.style.opacity = '0.78'; e.currentTarget.style.transform = 'scale(0.97)' }}
+              onMouseLeave={e => { e.currentTarget.style.opacity = '1';    e.currentTarget.style.transform = 'scale(1)' }}
+              title={ex.input}
+            >
+              <span style={{
+                display: 'inline-block', width: '7px', height: '7px',
+                borderRadius: '50%', background: ex.verdictColor, flexShrink: 0,
+              }} />
+              {ex.label}
+              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', opacity: 0.7, marginLeft: '2px' }}>
+                {ex.modeTag}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Stat pills */}
       <div
         className="flex items-center gap-3 mt-5 flex-wrap justify-center animate-fade-in"
         style={{ animationDelay: '0.44s', animationFillMode: 'both' }}
       >
         {[
-          { val: PLATFORM_STATS.totalVerified, label: 'verificados',       bg: '#F0FDF9', color: '#065F46' },
-          { val: PLATFORM_STATS.falseDetected, label: 'falsos detectados', bg: '#FFF5F5', color: '#B91C1C' },
-          { val: `${PLATFORM_STATS.accuracy}%`,label: 'precisión',         bg: '#EFF6FF', color: '#1D4ED8' },
+          { val: PLATFORM_STATS.totalVerified, label: 'verified',       bg: '#F0FDF9', color: '#065F46' },
+          { val: PLATFORM_STATS.falseDetected, label: 'false detected', bg: '#FFF5F5', color: '#B91C1C' },
+          { val: `${PLATFORM_STATS.accuracy}%`,label: 'accuracy',       bg: '#EFF6FF', color: '#1D4ED8' },
         ].map((s, i) => (
           <span
             key={i}
@@ -419,7 +532,7 @@ export function AnalyzerInput({ onSubmit, disabled, compact }: AnalyzerInputProp
           fontFamily: "'IBM Plex Mono', monospace", fontSize: '8px',
           letterSpacing: '0.12em', textTransform: 'uppercase', color: '#CBD5E1', marginBottom: '10px',
         }}>
-          Repositorios científicos de referencia
+          Scientific reference repositories
         </p>
         <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap', alignItems: 'center' }}>
           {['Nature', 'IPCC', 'WMO', 'Copernicus', 'Science', 'AGU', 'GLAMOS'].map(j => (
