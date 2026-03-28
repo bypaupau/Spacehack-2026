@@ -5,6 +5,10 @@ from gee_service import get_satellite_evidence, resolve_location, classify_claim
 from chart_service import generate_trend_chart_base64
 from journal_service import get_related_journals
 
+import ee
+import os
+import json
+
 app = FastAPI()
 
 # ¡Faltaba esto! Es vital para que FastAPI entienda el JSON que envía React
