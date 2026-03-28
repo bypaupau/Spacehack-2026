@@ -796,21 +796,21 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
           {/* ── SATELLITE IMAGES ─────────────────────────────────────────────── */}
           <div style={{ ...floatCard, padding: '20px 24px' }}>
             <SectionLabel icon={Satellite}>Satellite Evidence · Temporal Comparison</SectionLabel>
-            {hasRealImages ? (
-              <GEEImagePanel
-                beforeUrl={satellite.geeBeforeUrl!}
-                afterUrl={satellite.geeAfterUrl!}
-                beforeYear={satellite.geeBeforeYear ?? satellite.baselineYear}
-                afterYear={satellite.geeAfterYear ?? 2025}
-                location={satellite.geeLocation ?? satellite.images?.[0]?.location ?? 'Alps'}
-              />
+            {hasRealImages && satellite.geeBeforeUrl && satellite.geeAfterUrl ? (
+                <GEEImagePanel
+                    beforeUrl={satellite.geeBeforeUrl}
+                    afterUrl={satellite.geeAfterUrl}
+                    beforeYear={satellite.geeBeforeYear ?? satellite.baselineYear}
+                    afterYear={satellite.geeAfterYear ?? 2025}
+                    location={satellite.geeLocation ?? satellite.images?.[0]?.location ?? 'Alps'}
+                />
             ) : (
-              <SatelliteCompare
-                claimText={input}
-                location={satellite.images?.[0]?.location ?? 'Swiss Alps'}
-                beforeYear={satellite.baselineYear ?? 1990}
-                afterYear={2024}
-              />
+                <SatelliteCompare
+                    claimText={input}
+                    location={satellite.images?.[0]?.location ?? 'Swiss Alps'}
+                    beforeYear={satellite.baselineYear ?? 1990}
+                    afterYear={2024}
+                />
             )}
           </div>
 
