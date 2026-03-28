@@ -76,7 +76,7 @@ function SourceCard({ analysis }: { analysis: Analysis }) {
           </div>
           <span style={{ marginLeft: 'auto', fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', color: '#8FA3BF', letterSpacing: '0.07em', textTransform: 'uppercase' }}>Original post · analysed</span>
         </div>
-        <p style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '15px', color: '#1A2E47', lineHeight: 1.65, margin: '0 0 14px 0' }}>{sc.content}</p>
+        <p style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '15.5px', color: '#1A2E47', lineHeight: 1.65, margin: '0 0 14px 0' }}>{sc.content}</p>
         <div style={{ display: 'flex', gap: '18px', paddingTop: '10px', borderTop: '1px solid #F0F0F0' }}>
           {[
             { Icon: Repeat2, val: sc.retweets?.toLocaleString('en-GB') ?? '—', label: 'Reposts' },
@@ -135,7 +135,7 @@ function SourceCard({ analysis }: { analysis: Analysis }) {
           </a>
         </div>
         {sc.excerpt && (
-          <blockquote style={{ margin: 0, padding: '12px 16px', background: '#F0F4FC', borderRadius: '8px', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '14px', color: '#334155', lineHeight: 1.70, fontStyle: 'normal', fontWeight: 400, borderLeft: '3px solid #BFCDE0' }}>
+          <blockquote style={{ margin: 0, padding: '12px 16px', background: '#F0F4FC', borderRadius: '8px', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '15.5px', color: '#334155', lineHeight: 1.70, fontStyle: 'normal', fontWeight: 400, borderLeft: '3px solid #BFCDE0' }}>
             {sc.excerpt}
           </blockquote>
         )}
@@ -708,10 +708,11 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
 
   // Chart explanations based on chartUrls count
   const chartDescriptions = [
-    { n: 1, text: 'Annual snow coverage trend (hectares). The orange line is the linear regression confirming the statistically significant decline across the study period.' },
-    { n: 2, text: 'Net change from start to end of the period. Bars show the baseline volume (base year) versus the final volume, with the net loss percentage calculated from Landsat 8 pixels.' },
-    { n: 3, text: 'Decade-by-decade comparison. Each bar groups the average snow coverage for a full decade, making it possible to visualise the accelerating decline between 2000 and 2020.' },
-    { n: 4, text: 'Visual fact-check. Heat map generated with GEE that overlays the glacier retreat zone (red) on the current satellite image. The red area marks exposed rock where ice previously existed.' },
+    { n: 1, text: 'Annual snow coverage trend (hectares). The regression line confirms a statistically significant multi-decade decline across the study region.' },
+    { n: 2, text: 'Net change: baseline year vs. latest year. Bars show the initial and final snow volume — the percentage figure is derived from Landsat 8 pixel counts.' },
+    { n: 3, text: 'Decade-by-decade average. Each bar groups a full ten-year period, making the acceleration of decline between 2000 and 2020 clearly visible.' },
+    { n: 4, text: 'Anomaly vs. historical baseline. Years above/below the long-term mean are highlighted, showing how frequently recent years fall into extreme-deficit territory.' },
+    { n: 5, text: 'Year-on-year variability. Short-term fluctuations (including anomalously snowy years) are shown against the structural downward trend — confirming that record snowfalls do not reverse the overall loss.' },
   ]
 
   return (
@@ -724,11 +725,12 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
       {/* ── BACK ─────────────────────────────────────────────────────────────── */}
       {onBack && (
         <div style={{ marginBottom: '14px' }}>
-          <button onClick={onBack} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'transparent', border: 'none', borderRadius: '6px', padding: '6px 12px', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', fontWeight: 600, color: '#8FA3BF', letterSpacing: '0.05em', textTransform: 'uppercase', transition: 'all 0.15s' }}
+          <button onClick={onBack} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '32px', background: 'transparent', border: 'none', borderRadius: '8px', cursor: 'pointer', color: '#8FA3BF', transition: 'all 0.15s' }}
+            title="Go back"
             onMouseEnter={e => { const el = e.currentTarget as HTMLButtonElement; el.style.color = '#1D4ED8'; el.style.background = '#EFF6FF' }}
             onMouseLeave={e => { const el = e.currentTarget as HTMLButtonElement; el.style.color = '#8FA3BF'; el.style.background = 'transparent' }}
           >
-            <ArrowLeft size={11} strokeWidth={2.2} /> New verification
+            <ArrowLeft size={18} strokeWidth={2} />
           </button>
         </div>
       )}
@@ -811,7 +813,7 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
           {satellite.chartUrls && satellite.chartUrls.length > 0 && (
             <div style={{ ...floatCard, padding: '20px 24px' }}>
               <SectionLabel icon={Brain}>GEE Charts · Statistical Analysis</SectionLabel>
-              <p style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '13px', color: '#4A5A72', marginBottom: '14px', lineHeight: 1.5 }}>
+              <p style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '15.5px', color: '#4A5A72', marginBottom: '14px', lineHeight: 1.6 }}>
                 Charts generated with Google Earth Engine from Landsat 8 and Sentinel-2 data. Scroll to see the full analysis.
               </p>
               {/* Chart gallery — scroll arrows + fade indicator */}
@@ -865,7 +867,7 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
                     <span style={{ flexShrink: 0, width: '22px', height: '22px', borderRadius: '50%', background: '#EFF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', fontWeight: 800, color: '#1D4ED8' }}>
                       {chartDescriptions[i].n}
                     </span>
-                    <p style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '13px', color: '#4A5A72', lineHeight: 1.6, margin: 0 }}>
+                    <p style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '15.5px', color: '#4A5A72', lineHeight: 1.70, margin: 0 }}>
                       {chartDescriptions[i].text}
                     </p>
                   </div>
@@ -921,7 +923,7 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
               {claims.map((claim, i) => (
                 <div key={claim.id} style={{ display: 'flex', gap: '14px', alignItems: 'flex-start', padding: '13px 15px', borderRadius: '8px', background: vc.bg }}>
                   <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', fontWeight: 800, color: vc.color, flexShrink: 0, minWidth: '24px' }}>#{i + 1}</span>
-                  <p style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '14.5px', color: '#1A2E47', lineHeight: 1.5, margin: 0 }}>{claim.text}</p>
+                  <p style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '15.5px', color: '#1A2E47', lineHeight: 1.65, margin: 0 }}>{claim.text}</p>
                 </div>
               ))}
             </div>

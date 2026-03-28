@@ -44,9 +44,11 @@ function getValidationError(val: string, mode: InputMode, platform: string): str
 }
 
 interface AnalyzerInputProps {
-  onSubmit:  (input: string, mode?: InputMode, platform?: string) => void
-  disabled?: boolean
-  compact?:  boolean
+  onSubmit:        (input: string, mode?: InputMode, platform?: string) => void
+  disabled?:       boolean
+  compact?:        boolean
+  initialMode?:    InputMode
+  initialPlatform?: 'twitter' | 'reddit'
 }
 
 // ── Mode config ───────────────────────────────────────────────────────────────
@@ -129,8 +131,8 @@ const DEMO_EXAMPLES: {
     verdictBg:    '#FFFBEB',
   },
   {
-    label:        'Tweet @PeakTruth99',
-    input:        'https://x.com/PeakTruth99/status/1234567890',
+    label:        'Tweet @Kursed65936965',
+    input:        'https://x.com/Kursed65936965/status/2037960299991499097?s=20',
     mode:         'social',
     platform:     'twitter',
     modeTag:      'x/twitter',
@@ -168,10 +170,10 @@ function ModePill({
   )
 }
 
-export function AnalyzerInput({ onSubmit, disabled, compact }: AnalyzerInputProps) {
+export function AnalyzerInput({ onSubmit, disabled, compact, initialMode, initialPlatform }: AnalyzerInputProps) {
   const [value,       setValue]       = useState('')
-  const [mode,        setMode]        = useState<InputMode>('statement')
-  const [platform,    setPlatform]    = useState<'twitter' | 'reddit'>('twitter')
+  const [mode,        setMode]        = useState<InputMode>(initialMode ?? 'statement')
+  const [platform,    setPlatform]    = useState<'twitter' | 'reddit'>(initialPlatform ?? 'twitter')
   const [inputError,  setInputError]  = useState<string | null>(null)
   const [showError,   setShowError]   = useState(false)
 

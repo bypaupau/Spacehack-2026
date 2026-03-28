@@ -4,7 +4,7 @@
 //     prototype case routing.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import type { Analysis, InputMode }   from '../types'
 import { useAnalysis }                from '../hooks/useAnalysis'
 import { AnalyzerInput }              from '../components/analyzer/AnalyzerInput'
@@ -18,6 +18,8 @@ interface HomePageProps {
 
 export function HomePage({ externalResult, onClearExternal }: HomePageProps) {
   const { state, analysis, error, submit, reset } = useAnalysis()
+  const [lastMode,     setLastMode]     = useState<InputMode>('statement')
+  const [lastPlatform, setLastPlatform] = useState<'twitter' | 'reddit'>('twitter')
 
   useEffect(() => {
     if (externalResult) reset()
@@ -27,6 +29,8 @@ export function HomePage({ externalResult, onClearExternal }: HomePageProps) {
   const isActive        = state === 'loading' || state === 'success' || state === 'error' || !!externalResult
 
   const handleNewSubmit = (val: string, mode?: InputMode, platform?: string) => {
+    if (mode)     setLastMode(mode)
+    if (platform) setLastPlatform(platform as 'twitter' | 'reddit')
     onClearExternal?.()
     submit(val, mode, platform)
   }
@@ -53,6 +57,8 @@ export function HomePage({ externalResult, onClearExternal }: HomePageProps) {
             onSubmit={handleNewSubmit}
             disabled={state === 'loading'}
             compact
+            initialMode={lastMode}
+            initialPlatform={lastPlatform}
           />
 
           {/* Loading */}

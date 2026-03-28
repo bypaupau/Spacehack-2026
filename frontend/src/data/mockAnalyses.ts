@@ -49,11 +49,6 @@ export const MOCK_ANALYSES: Analysis[] = [
         '/charts/switzerland/03_promedio_por_decada.png',
         '/charts/switzerland/04_anomalia_vs_linea_base.png',
         '/charts/switzerland/05_variacion_interanual.png',
-        '/charts/switzerland/06_ranking_top5_bottom5.png',
-        '/charts/switzerland/07_racha_bajo_linea_base.png',
-        '/charts/switzerland/08_media_movil_5y.png',
-        '/charts/switzerland/09_deficit_acumulado.png',
-        '/charts/switzerland/10_factcheck_card.png',
       ],
       timeSeries: [
         { year: 2015, coverage: 78 },
@@ -113,11 +108,6 @@ export const MOCK_ANALYSES: Analysis[] = [
         '/charts/france/03_promedio_por_decada.png',
         '/charts/france/04_anomalia_vs_linea_base.png',
         '/charts/france/05_variacion_interanual.png',
-        '/charts/france/06_ranking_top5_bottom5.png',
-        '/charts/france/07_racha_bajo_linea_base.png',
-        '/charts/france/08_media_movil_5y.png',
-        '/charts/france/09_deficit_acumulado.png',
-        '/charts/france/10_factcheck_card.png',
       ],
       timeSeries: [
         { year: 2015, coverage: 85 },
@@ -177,11 +167,6 @@ export const MOCK_ANALYSES: Analysis[] = [
         '/charts/switzerland/03_promedio_por_decada.png',
         '/charts/switzerland/04_anomalia_vs_linea_base.png',
         '/charts/switzerland/05_variacion_interanual.png',
-        '/charts/switzerland/06_ranking_top5_bottom5.png',
-        '/charts/switzerland/07_racha_bajo_linea_base.png',
-        '/charts/switzerland/08_media_movil_5y.png',
-        '/charts/switzerland/09_deficit_acumulado.png',
-        '/charts/switzerland/10_factcheck_card.png',
       ],
       timeSeries: [
         { year: 2015, coverage: 76 },
@@ -242,11 +227,6 @@ export const MOCK_ANALYSES: Analysis[] = [
         '/charts/switzerland/03_promedio_por_decada.png',
         '/charts/switzerland/04_anomalia_vs_linea_base.png',
         '/charts/switzerland/05_variacion_interanual.png',
-        '/charts/switzerland/06_ranking_top5_bottom5.png',
-        '/charts/switzerland/07_racha_bajo_linea_base.png',
-        '/charts/switzerland/08_media_movil_5y.png',
-        '/charts/switzerland/09_deficit_acumulado.png',
-        '/charts/switzerland/10_factcheck_card.png',
       ],
       timeSeries: [
         { year: 2015, coverage: 78 },
@@ -316,11 +296,6 @@ export const MOCK_ANALYSES: Analysis[] = [
         '/charts/austria/03_promedio_por_decada.png',
         '/charts/austria/04_anomalia_vs_linea_base.png',
         '/charts/austria/05_variacion_interanual.png',
-        '/charts/austria/06_ranking_top5_bottom5.png',
-        '/charts/austria/07_racha_bajo_linea_base.png',
-        '/charts/austria/08_media_movil_5y.png',
-        '/charts/austria/09_deficit_acumulado.png',
-        '/charts/austria/10_factcheck_card.png',
       ],
       timeSeries: [
         { year: 1990, coverage: 100 }, { year: 1995, coverage: 94 },
@@ -409,11 +384,6 @@ The threat is real, progressive, and satellite-verified. The original statement 
         '/charts/switzerland/03_promedio_por_decada.png',
         '/charts/switzerland/04_anomalia_vs_linea_base.png',
         '/charts/switzerland/05_variacion_interanual.png',
-        '/charts/switzerland/06_ranking_top5_bottom5.png',
-        '/charts/switzerland/07_racha_bajo_linea_base.png',
-        '/charts/switzerland/08_media_movil_5y.png',
-        '/charts/switzerland/09_deficit_acumulado.png',
-        '/charts/switzerland/10_factcheck_card.png',
       ],
       timeSeries: [
         { year: 1990, coverage: 100 }, { year: 1995, coverage: 93 },
@@ -500,11 +470,6 @@ The source "arctic-truth.net" does not appear in the IFCN (International Fact-Ch
         '/charts/switzerland/03_promedio_por_decada.png',
         '/charts/switzerland/04_anomalia_vs_linea_base.png',
         '/charts/switzerland/05_variacion_interanual.png',
-        '/charts/switzerland/06_ranking_top5_bottom5.png',
-        '/charts/switzerland/07_racha_bajo_linea_base.png',
-        '/charts/switzerland/08_media_movil_5y.png',
-        '/charts/switzerland/09_deficit_acumulado.png',
-        '/charts/switzerland/10_factcheck_card.png',
       ],
       timeSeries: [
         { year: 1980, coverage: 100 }, { year: 1985, coverage: 98 },
@@ -549,7 +514,7 @@ Regarding the claim that "official data do not reflect field reality": GLAMOS da
   // ── CASE PROTOTYPE 7: Social Post (X/Twitter) — False ────────────────────
   {
     id: 'a007',
-    input: 'https://x.com/PeakTruth99/status/1766234598001234567',
+    input: 'https://x.com/Kursed65936965/status/2037960299991499097',
     inputMode: 'social',
     platform: 'twitter',
     headline: 'Viral tweet: "Lake Pasterze GROWING" — Contradicts satellite evidence',
@@ -559,8 +524,8 @@ Regarding the claim that "official data do not reflect field reality": GLAMOS da
     summary:
       'Landsat 8 images of Lake Pasterze show sustained 62 meters/year retreat since 1990, with glacier surface reduced to 38% of its original extent. The tweet uses a photograph of the lake taken in February (maximum snow accumulation season) to suggest glacier growth, which is an invalid seasonal comparison. The hashtag #ClimateScam was promoted in 2025 by accounts linked to fossil fuel lobbies according to GDELT database.',
     sourceCard: {
-      username:  'PeakTruth99',
-      handle:    '@PeakTruth99',
+      username:  'Kursed65936965',
+      handle:    '@Kursed65936965',
       content:   'Lake Pasterze in Austria has GROWN this winter. I was there. The snow reaches all the way down. The "scientists" at the IPCC have been lying to us for 20 years. The satellite images they show us are manipulated. #ClimateScam #Alps #PeakNews',
       likes:     4203,
       retweets:  1847,
@@ -593,11 +558,6 @@ Regarding the claim that "official data do not reflect field reality": GLAMOS da
         '/charts/austria/03_promedio_por_decada.png',
         '/charts/austria/04_anomalia_vs_linea_base.png',
         '/charts/austria/05_variacion_interanual.png',
-        '/charts/austria/06_ranking_top5_bottom5.png',
-        '/charts/austria/07_racha_bajo_linea_base.png',
-        '/charts/austria/08_media_movil_5y.png',
-        '/charts/austria/09_deficit_acumulado.png',
-        '/charts/austria/10_factcheck_card.png',
       ],
       timeSeries: [
         { year: 1990, coverage: 100 }, { year: 1995, coverage: 94 },
@@ -626,7 +586,7 @@ Regarding the claim that "official data do not reflect field reality": GLAMOS da
       { value: 'Feb. vs Sep.', label: 'Invalid seasonal comparison', sublabel: 'Tweet compares accumulation months vs ablation', trend: 'down' },
       { value: '4,203', label: 'Likes in 3 hours', sublabel: 'Viral reach — mass diffusion risk', trend: 'down' },
     ],
-    richNarrative: `The tweet by @PeakTruth99 commits a fundamental methodological error: comparing Lake Pasterze's appearance in **February** (maximum snow accumulation month) with images from **September** (end of summer). This seasonal comparison is invalid for evaluating long-term glacier trends and is a widely documented visual manipulation technique [IFCN].
+    richNarrative: `The tweet by @Kursed65936965 commits a fundamental methodological error: comparing Lake Pasterze's appearance in **February** (maximum snow accumulation month) with images from **September** (end of summer). This seasonal comparison is invalid for evaluating long-term glacier trends and is a widely documented visual manipulation technique [IFCN].
 
 Lake Pasterze satellite data are public and verifiable across multiple independent databases. Tyrol snow coverage, processed with Google Earth Engine from Landsat 8, fell from **15,603 ha (2000) to 9,188 ha (2025)**, with an absolute minimum of **5,937 ha in 2022** [1]. Sentinel-2 (ESA) imagery shows the expansion of exposed rock (grey/brown color) where active glacier ice once existed [2].
 
