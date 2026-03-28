@@ -96,28 +96,10 @@ export function AnalyzerInput({ onSubmit, disabled, compact }: AnalyzerInputProp
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', maxWidth: '580px' }}>
-          {/* Mode pills — compact */}
+          {/* Mode pills — compact (sin sub-pills de plataforma: ya se seleccionó al enviar) */}
           <div style={{ display: 'flex', gap: '6px' }}>
             {MODES.map(m => (
               <ModePill key={m.id} mode={m} active={mode === m.id} onClick={() => setMode(m.id)} />
-            ))}
-            {mode === 'social' && SOCIAL_PLATFORMS.map(p => (
-              <button
-                key={p.id}
-                onClick={() => setPlatform(p.id)}
-                style={{
-                  display: 'inline-flex', alignItems: 'center',
-                  padding: '4px 12px', borderRadius: '20px',
-                  border: 'none',
-                  background: platform === p.id ? '#1D4ED8' : '#EEF2F7',
-                  color: platform === p.id ? '#FFFFFF' : '#8FA3BF',
-                  fontSize: '11px', fontFamily: "'IBM Plex Sans', sans-serif",
-                  fontWeight: platform === p.id ? 700 : 500, cursor: 'pointer',
-                  transition: 'all 0.15s',
-                }}
-              >
-                {p.label}
-              </button>
             ))}
           </div>
 
@@ -161,7 +143,7 @@ export function AnalyzerInput({ onSubmit, disabled, compact }: AnalyzerInputProp
     >
       {/* Logo */}
       <div className="mb-4 animate-fade-in" style={{ animationDelay: '0s' }}>
-        <Logo size={64} />
+        <Logo size={130} />
       </div>
 
       {/* Brand name */}

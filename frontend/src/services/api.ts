@@ -24,18 +24,23 @@ const delay = (ms: number) => new Promise(res => setTimeout(res, ms))
 //   [3] = a004 glaciares suizos crecen (false)
 //   [4] = a005 ¿se puede esquiar? (misleading)  — mode:statement
 //   [5] = a006 arctic-truth.net artículo (false) — mode:article
-//   [6] = a007 tweet @PeakTruth99 (false)       — mode:social
+//   [6] = a008 Reddit r/climate nieve récord (misleading) — mode:social, platform:reddit
+//   [7] = a007 tweet @PeakTruth99 (false)       — mode:social, platform:twitter
 //
 function pickMockAnalysis(input: string, mode?: InputMode, platform?: string): Analysis {
   const lower = input.toLowerCase()
 
   // ── Mode-based routing (highest priority) ─────────────────────────────────
-  if (mode === 'social')  return MOCK_ANALYSES[6]
+  if (mode === 'social') {
+    // Differentiate Reddit vs Twitter/X
+    if (platform === 'reddit' || lower.includes('reddit.com')) return MOCK_ANALYSES[6]
+    return MOCK_ANALYSES[7] // default social → Twitter
+  }
   if (mode === 'article') return MOCK_ANALYSES[5]
   if (mode === 'statement') {
     // Within statement mode, still do keyword matching for other prototype cases
-    if (lower.includes('mont blanc'))                           return MOCK_ANALYSES[1]
-    if (lower.includes('nevadas') || lower.includes('récord')) return MOCK_ANALYSES[2]
+    if (lower.includes('mont blanc'))                              return MOCK_ANALYSES[1]
+    if (lower.includes('nevadas') || lower.includes('récord'))    return MOCK_ANALYSES[2]
     if (lower.includes('crecen')  || lower.includes('creciendo')) return MOCK_ANALYSES[3]
     // Default statement → prototype case (skiing / glacier question)
     return MOCK_ANALYSES[4]
@@ -43,7 +48,7 @@ function pickMockAnalysis(input: string, mode?: InputMode, platform?: string): A
 
   // ── Auto-detect from URL pattern (no explicit mode set) ───────────────────
   if (lower.startsWith('http')) {
-    if (lower.includes('twitter.com') || lower.includes('x.com'))   return MOCK_ANALYSES[6]
+    if (lower.includes('twitter.com') || lower.includes('x.com'))   return MOCK_ANALYSES[7]
     if (lower.includes('reddit.com'))                                return MOCK_ANALYSES[6]
     // Any other URL → article case
     return MOCK_ANALYSES[5]

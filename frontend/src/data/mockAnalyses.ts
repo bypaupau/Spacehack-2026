@@ -392,6 +392,90 @@ La fuente "arctic-truth.net" no aparece en el índice de medios verificados por 
     ],
   },
 
+  // ── CASO PROTOTIPO 8: Social Post (Reddit) — Engañoso ───────────────────
+  // r/climate post sobre cobertura nival selectiva (Suiza, invierno récord)
+  {
+    id: 'a008',
+    input: 'https://reddit.com/r/climate/comments/1a2b3c/swiss_glaciers_record_snow_2025',
+    inputMode: 'social',
+    platform: 'reddit',
+    headline: 'Post viral en Reddit: "Nieve récord en Suiza 2025" — Engañoso por omisión de contexto',
+    analyzedAt: '2026-03-28T12:00:00Z',
+    verdict: 'misleading',
+    score: 38,
+    summary:
+      'El post usa datos reales de acumulación nival invernal de diciembre 2025 para sugerir que los glaciares suizos están "recuperándose". Los datos GEE confirman que la cobertura de nieve estacional fue efectivamente superior a la media en ese período. Sin embargo, la masa glaciar neta de Suiza en 2025 sigue un 37% por debajo del nivel de referencia de 1980 (GLAMOS). Una buena temporada invernal no revierte décadas de pérdida de masa.',
+    sourceCard: {
+      subreddit: 'r/climate',
+      username:  'AlpineSkier2025',
+      content:   'Los glaciares suizos están recibiendo más nieve este invierno que en los últimos 10 años. He hecho senderismo en el Jungfrau y la nieve llegaba hasta los 1,200m. Los medios solo hablan de deshielo pero la realidad es diferente. ¿Alguien más nota que los datos "oficiales" no reflejan lo que vemos en el campo? #ScienceIsNeverSettled',
+      upvotes:   3847,
+      comments:  412,
+    },
+    claims: [
+      { id: 1, text: 'Los glaciares suizos reciben más nieve este invierno que en los últimos 10 años' },
+      { id: 2, text: 'Los datos oficiales no reflejan lo que se observa en el campo' },
+      { id: 3, text: '"La ciencia nunca está establecida" como argumento para cuestionar el consenso glaciológico' },
+    ],
+    satellite: {
+      glacierRetreat: 45,
+      snowCoverage:   71,
+      ndviIndex:      0.49,
+      coverageTrend:  -14.2,
+      baselineYear:   1980,
+      images: [
+        { date: 'Diciembre 2024', location: 'Jungfrau, Suiza',    source: 'Sentinel-2' },
+        { date: 'Diciembre 2025', location: 'Jungfrau, Suiza',    source: 'Sentinel-2' },
+      ],
+      geeBeforeUrl:  '/satellite/suiza_jungfrau_1990.jpg',
+      geeAfterUrl:   '/satellite/suiza_jungfrau_2025.jpg',
+      geeBeforeYear: 1990,
+      geeAfterYear:  2025,
+      geeLocation:   'Jungfrau, Suiza · Fuente: Landsat 8 / Sentinel-2 via GEE',
+      chartUrls: [
+        '/satellite/suiza_01_tendencia.png',
+        '/satellite/suiza_10_factcheck.png',
+      ],
+      timeSeries: [
+        { year: 1980, coverage: 100 }, { year: 1985, coverage: 98 },
+        { year: 1990, coverage: 95 },  { year: 1995, coverage: 91 },
+        { year: 2000, coverage: 87 },  { year: 2005, coverage: 84 },
+        { year: 2010, coverage: 80 },  { year: 2015, coverage: 76 },
+        { year: 2020, coverage: 69 },  { year: 2022, coverage: 64 },
+        { year: 2023, coverage: 63 },  { year: 2024, coverage: 71 }, // anomalía positiva 2024/25
+      ],
+    },
+    nlp: {
+      minimizationScore: 72,
+      delayismScore:     38,
+      denialismScore:    28,
+      topKeywords: ['récord', 'recuperándose', 'datos oficiales', 'ScienceIsNeverSettled', 'campo'],
+      narrativeType: 'Minimización por variabilidad natural — cherry-picking estacional',
+      scores: [
+        { label: 'Negacionismo directo', value: 28, description: 'No niega el cambio climático, lo cuestiona indirectamente' },
+        { label: 'Minimización',         value: 72, description: 'Usa anomalía estacional positiva para invalidar tendencia de 45 años' },
+        { label: 'Retardismo',           value: 38, description: '"La ciencia no está establecida" sugiere esperar más evidencia' },
+      ],
+    },
+    sources: ACTIVE_SOURCES,
+    dataStats: [
+      { value: '−37%',  label: 'Masa glaciar Suiza vs 1980', sublabel: 'GLAMOS 2025 · tendencia a largo plazo', trend: 'down' },
+      { value: '+12%',  label: 'Nieve estacional dic-2025',   sublabel: 'Anomalía positiva confirmada · Copernicus C3S', trend: 'up' },
+      { value: '63 %',  label: 'Masa glaciar relativa 2023',  sublabel: 'vs. referencia 1980 = 100% · GLAMOS', trend: 'down' },
+      { value: '3,847', label: 'Upvotes en 6 horas',          sublabel: 'Alcance elevado — r/climate (3.2M miembros)', trend: 'down' },
+    ],
+    richNarrative: `El post de u/AlpineSkier2025 contiene una observación real pero la extrapola incorrectamente. Copernicus C3S confirma que diciembre 2025 fue un mes con **acumulación nival superior a la media en los Alpes suizos (+12% sobre la media 1991–2020)** [1]. La observación en Jungfrau a 1,200m coincide con los datos satelitales Sentinel-2 de esa temporada.
+
+Sin embargo, una anomalía estacional positiva no puede interpretarse como evidencia contra la tendencia a largo plazo. GLAMOS (Glaciological Reports 2025) documenta que la **masa glaciar suiza en 2025 es el 63% del nivel de referencia de 1980** [2], con pérdida acumulada del 37%. El año excepcional 2022 registró la mayor pérdida anual jamás medida (−6% en un solo verano). Nature (Hugonnet et al., 2021) cuantifica la **aceleración de pérdida de masa glaciar alpina** a 1.8 Gt/año en la década 2010–2019, el doble que en 2000–2009 [3].
+
+Respecto a la afirmación de que "los datos oficiales no reflejan la realidad de campo": los datos GLAMOS son precisamente mediciones de campo realizadas por glaciólogos suizos que recorren físicamente los glaciares cada otoño desde 1879. La observación desde una pista de esquí en diciembre no puede substituir 45 años de monitoreo sistemático.`,
+    relatedMedia: [
+      { type: 'report',  source: 'GLAMOS Switzerland', title: 'Swiss Glacier Monitoring Network — Annual Report 2024–2025', url: 'https://glamos.ch/en/factsheets', date: '2025' },
+      { type: 'article', source: 'Copernicus C3S',     title: 'Alpine snow cover bulletin: December 2025 anomaly analysis', url: 'https://climate.copernicus.eu/alpine-snow', date: 'Ene 2026' },
+      { type: 'video',   source: 'SRF Schweiz',        title: 'Rekordschnee im Winter, aber Gletscher weiterhin auf dem Rückzug', url: 'https://srf.ch/news/schweiz', date: 'Ene 2026' },
+    ],
+  },
+
   // ── CASO PROTOTIPO 7: Social Post (X/Twitter) — Falso ────────────────────
   {
     id: 'a007',

@@ -52,9 +52,9 @@ const TRUSTED_JOURNALS = [
 // ── SectionLabel ───────────────────────────────────────────────────────────────
 function SectionLabel({ icon: Icon, children }: { icon: LucideIcon, children: string }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '16px' }}>
-      <Icon size={13} strokeWidth={2.2} color="#8FA3BF" />
-      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', color: '#8FA3BF', letterSpacing: '0.09em', textTransform: 'uppercase', fontWeight: 700 }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginBottom: '16px' }}>
+      <Icon size={14} strokeWidth={2.2} color="#4A5A72" />
+      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: '#4A5A72', letterSpacing: '0.10em', textTransform: 'uppercase', fontWeight: 800 }}>
         {children}
       </span>
     </div>
@@ -136,7 +136,7 @@ function SourceCard({ analysis }: { analysis: Analysis }) {
           </a>
         </div>
         {sc.excerpt && (
-          <blockquote style={{ margin: 0, padding: '12px 16px', background: '#F0F4FC', borderRadius: '8px', fontFamily: "'Playfair Display', serif", fontSize: '14px', color: '#334155', lineHeight: 1.65, fontStyle: 'italic' }}>
+          <blockquote style={{ margin: 0, padding: '12px 16px', background: '#F0F4FC', borderRadius: '8px', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '14px', color: '#334155', lineHeight: 1.70, fontStyle: 'normal', fontWeight: 400, borderLeft: '3px solid #BFCDE0' }}>
             {sc.excerpt}
           </blockquote>
         )}
@@ -299,48 +299,80 @@ function RichNarrative({ text }: { text: string }) {
   )
 }
 
-// ── RelatedMedia ───────────────────────────────────────────────────────────────
+// ── RelatedMedia — thumbnail cards ─────────────────────────────────────────────
 function RelatedMediaSection({ items }: { items: NonNullable<Analysis['relatedMedia']> }) {
-  const typeIcon = (t: string) => {
-    if (t === 'video')  return <PlayCircle size={12} color="#1D4ED8" />
-    if (t === 'report') return <BookOpen   size={12} color="#065F46" />
-    return                     <Newspaper  size={12} color="#92400E" />
-  }
-  const typeBg = (t: string) => {
-    if (t === 'video')  return '#EFF6FF'
-    if (t === 'report') return '#F0FDF9'
-    return                     '#FFFBEB'
+  // Deterministic gradient per source initial
+  const thumbGradient = (source: string, type: string) => {
+    if (type === 'video')  return 'linear-gradient(135deg, #1E3A5F 0%, #1D4ED8 100%)'
+    if (type === 'report') return 'linear-gradient(135deg, #064E3B 0%, #059669 100%)'
+    // article — vary by source
+    const h = source.charCodeAt(0) % 4
+    const grads = [
+      'linear-gradient(135deg, #1E293B 0%, #334155 100%)',
+      'linear-gradient(135deg, #422006 0%, #92400E 100%)',
+      'linear-gradient(135deg, #1E1B4B 0%, #3730A3 100%)',
+      'linear-gradient(135deg, #0C1A2E 0%, #1D4ED8 100%)',
+    ]
+    return grads[h]
   }
   const typeColor = (t: string) => {
     if (t === 'video')  return '#1D4ED8'
     if (t === 'report') return '#065F46'
     return                     '#92400E'
   }
+  const typeBg = (t: string) => {
+    if (t === 'video')  return '#EFF6FF'
+    if (t === 'report') return '#F0FDF9'
+    return                     '#FFFBEB'
+  }
   const typeLabel = (t: string) => ({ video: 'Video', report: 'Informe', article: 'Artículo' }[t] ?? t)
+  const typeIcon = (t: string) => {
+    if (t === 'video')  return <PlayCircle size={11} color={typeColor(t)} />
+    if (t === 'report') return <BookOpen   size={11} color={typeColor(t)} />
+    return                     <Newspaper  size={11} color={typeColor(t)} />
+  }
 
   return (
     <div style={{ ...floatCard, padding: '20px 24px' }}>
       <SectionLabel icon={Newspaper}>Artículos y Medios Relacionados</SectionLabel>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {items.map((item, i) => (
           <a key={i} href={item.url} target="_blank" rel="noopener noreferrer"
-            style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '12px', borderRadius: '8px', background: '#F5F7FA', textDecoration: 'none', transition: 'background 0.14s' }}
-            onMouseEnter={e => (e.currentTarget.style.background = '#EEF2F7')}
-            onMouseLeave={e => (e.currentTarget.style.background = '#F5F7FA')}
+            style={{ display: 'flex', alignItems: 'stretch', gap: '0', borderRadius: '10px', background: '#FFFFFF', textDecoration: 'none', overflow: 'hidden', boxShadow: '0 1px 3px rgba(13,28,56,0.05)', transition: 'box-shadow 0.14s, transform 0.14s' }}
+            onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 4px 14px rgba(13,28,56,0.10)'; e.currentTarget.style.transform = 'translateY(-1px)' }}
+            onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 1px 3px rgba(13,28,56,0.05)'; e.currentTarget.style.transform = 'translateY(0)' }}
           >
-            {/* Type badge */}
-            <span style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '3px 8px', borderRadius: '4px', background: typeBg(item.type), flexShrink: 0 }}>
-              {typeIcon(item.type)}
-              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', fontWeight: 700, color: typeColor(item.type), textTransform: 'uppercase', letterSpacing: '0.05em' }}>{typeLabel(item.type)}</span>
-            </span>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{ margin: '0 0 3px', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '13px', fontWeight: 600, color: '#0D1F38', lineHeight: 1.4 }}>{item.title}</p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '11px', color: '#8FA3BF', fontWeight: 500 }}>{item.source}</span>
+            {/* Thumbnail — colored gradient block */}
+            <div style={{ width: '76px', flexShrink: 0, background: thumbGradient(item.source, item.type), display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '5px', minHeight: '72px' }}>
+              {/* Source initial */}
+              <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '22px', fontWeight: 800, color: 'rgba(255,255,255,0.85)', lineHeight: 1 }}>
+                {item.source.charAt(0).toUpperCase()}
+              </span>
+              {item.type === 'video' && (
+                <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <PlayCircle size={12} color="rgba(255,255,255,0.9)" />
+                </div>
+              )}
+            </div>
+
+            {/* Content */}
+            <div style={{ flex: 1, minWidth: 0, padding: '12px 14px', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '5px', borderLeft: '1px solid #F0F4FA' }}>
+              {/* Type badge */}
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '2px 8px', borderRadius: '4px', background: typeBg(item.type), alignSelf: 'flex-start' }}>
+                {typeIcon(item.type)}
+                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '8px', fontWeight: 800, color: typeColor(item.type), textTransform: 'uppercase', letterSpacing: '0.07em' }}>{typeLabel(item.type)}</span>
+              </span>
+              <p style={{ margin: 0, fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '13px', fontWeight: 600, color: '#0D1F38', lineHeight: 1.35, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as const }}>{item.title}</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '11px', color: '#8FA3BF', fontWeight: 600 }}>{item.source}</span>
                 {item.date && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: '#C8D3E0' }}>· {item.date}</span>}
               </div>
             </div>
-            <ExternalLink size={13} color="#8FA3BF" style={{ flexShrink: 0, marginTop: '2px' }} />
+
+            {/* Arrow */}
+            <div style={{ display: 'flex', alignItems: 'center', paddingRight: '14px', color: '#C8D3E0', flexShrink: 0 }}>
+              <ExternalLink size={13} />
+            </div>
           </a>
         ))}
       </div>
@@ -357,9 +389,9 @@ function CollapsibleSources({ sources, journals }: { sources: Analysis['sources'
         onClick={() => setOpen(s => !s)}
         style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '10px', padding: '16px 20px', background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left' }}
       >
-        <BookOpen size={14} strokeWidth={2} color="#8FA3BF" />
-        <span style={{ flex: 1, fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', color: '#8FA3BF', letterSpacing: '0.09em', textTransform: 'uppercase', fontWeight: 700 }}>
-          Fuentes · {sources.length} científicas + literatura revisada por pares
+        <BookOpen size={14} strokeWidth={2} color="#4A5A72" />
+        <span style={{ flex: 1, fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: '#4A5A72', letterSpacing: '0.10em', textTransform: 'uppercase', fontWeight: 800 }}>
+          Fuentes utilizadas · {sources.length} repositorios + literatura peer-reviewed
         </span>
         {open
           ? <ChevronUp   size={16} color="#8FA3BF" />
@@ -596,13 +628,13 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
             </div>
           </div>
 
+          {/* ── COLLAPSIBLE SOURCES (antes de related news — son cosas distintas) ── */}
+          <CollapsibleSources sources={sources} journals={<JournalsPanel claimText={input} />} />
+
           {/* ── RELATED MEDIA ────────────────────────────────────────────────── */}
           {relatedMedia && relatedMedia.length > 0 && (
             <RelatedMediaSection items={relatedMedia} />
           )}
-
-          {/* ── COLLAPSIBLE SOURCES ──────────────────────────────────────────── */}
-          <CollapsibleSources sources={sources} journals={<JournalsPanel claimText={input} />} />
 
         </div>
 
