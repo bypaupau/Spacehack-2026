@@ -5,6 +5,9 @@ backend/.venv/
 node_modules/
 *.tif
 *.jpg
+# Allow satellite/chart images in the frontend public folder
+!frontend/public/**/*.jpg
+!frontend/public/**/*.png
 dist/
 
 # IDE & OS files
