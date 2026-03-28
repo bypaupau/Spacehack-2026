@@ -1,0 +1,91 @@
+// ============================================
+// IBILENS: NACIMIENTO DEL LAGO TRIFTSEE (COLOR REAL "4K")
+// 1990 (Glaciar Sólido) vs 2025 (Lago Proglaciar)
+// ============================================
+
+// 1. Zona exacta: Glaciar Trift
+var triftCoords = [8.36, 46.68];
+var puntoEstudio = ee.Geometry.Point(triftCoords);
+var areaDeInteres = puntoEstudio.buffer(4000); // 4km de radio para enfocar directo al lago
+
+Map.centerObject(puntoEstudio, 14); // ZOOM 14 para máximo detalle visual
+Map.setOptions('SATELLITE');
+
+// ============================================
+// 2. AÑO 1990 - LANDSAT 5 (COLOR REAL)
+// ============================================
+var img1990 = ee.ImageCollection('LANDSAT/LT05/C02/T1_TOA')
+  .filterBounds(areaDeInteres)
+  .filterDate('1990-07-15', '1990-09-15')
+  .sort('CLOUD_COVER') // Buscamos los días más despejados
+  .limit(5)
+  .median()
+  .clip(areaDeInteres);
+
+// Parámetros HD: Ajuste estricto para que la nieve no deslumbre y la roca tenga textura
+var visReal1990 = {bands: ['B3', 'B2', 'B1'], min: 0, max: 0.3, gamma: 1.2};
+
+// ============================================
+// 3. AÑO 2025 - SENTINEL-2 (COLOR REAL HD)
+// ============================================
+var img2025 = ee.ImageCollection('COPERNICUS/S2_HARMONIZED')
+  .filterBounds(areaDeInteres)
+  .filterDate('2024-07-15', '2025-09-15') // Verano reciente
+  .sort('CLOUDY_PIXEL_PERCENTAGE')
+  .limit(5)
+  .median()
+  .clip(areaDeInteres);
+
+// Parámetros HD para Sentinel-2
+var visReal2025 = {bands: ['B4', 'B3', 'B2'], min: 0, max: 3000, gamma: 1.2};
+
+// ============================================
+// 4. CREAR EL SLIDER INTERACTIVO
+// ============================================
+var mapaIzquierdo = ui.Map();
+mapaIzquierdo.centerObject(puntoEstudio, 14);
+mapaIzquierdo.addLayer(img1990, visReal1990, '1990 (Color Real)');
+mapaIzquierdo.add(ui.Label('1990 (Glaciar Sólido)', {
+  position: 'bottom-left', fontWeight: 'bold', color: 'black', backgroundColor: 'rgba(255,255,255,0.7)'
+}));
+
+var mapaDerecho = ui.Map();
+mapaDerecho.addLayer(img2025, visReal2025, '2025 (Color Real)');
+mapaDerecho.add(ui.Label('2025 (Nuevo Lago Triftsee)', {
+  position: 'bottom-right', fontWeight: 'bold', color: 'black', backgroundColor: 'rgba(255,255,255,0.7)'
+}));
+
+var vinculador = ui.Map.Linker([mapaIzquierdo, mapaDerecho]);
+var splitPanel = new ui.SplitPanel({
+  firstPanel: vinculador.get(0),
+  secondPanel: vinculador.get(1),
+  wipe: true,
+  style: {stretch: 'both'}
+});
+
+ui.root.widgets().reset([splitPanel]);
+
+// ============================================
+// 5. EXPORTAR A GOOGLE DRIVE (Descargar imágenes "4K")
+// ============================================
+
+// Exportar la imagen de 1990 (Color Real)
+Export.image.toDrive({
+  // .visualize() asegura que se guarde con el color fotográfico perfecto
+  image: img1990.visualize(visReal1990), 
+  description: 'IbiLens_Triftsee_1990_HD',
+  folder: 'IbiLens_Hackathon', // Se creará esta carpeta en tu Google Drive
+  scale: 10, // Resolución máxima
+  region: areaDeInteres, 
+  maxPixels: 1e13
+});
+
+// Exportar la imagen de 2025 (Color Real)
+Export.image.toDrive({
+  image: img2025.visualize(visReal2025),
+  description: 'IbiLens_Triftsee_2025_HD',
+  folder: 'IbiLens_Hackathon',
+  scale: 10, 
+  region: areaDeInteres,
+  maxPixels: 1e13
+});
