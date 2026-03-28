@@ -148,74 +148,74 @@ def get_satellite_evidence(
         year_before  = eff_before
         year_after   = eff_after
 
-    # ── GLACIAR: Sentinel-2 NDSI (verano para ver hielo sin nieve) ────────────
+    # ── GLACIAR: Color Real RGB ────────────────────────────────────────────────
+    # Mismo enfoque que los scripts del equipo:
+    #   ANTES  → Landsat 5 TOA  (B3, B2, B1) — disponible desde 1984
+    #   DESPUÉS → Sentinel-2 Harmonized (B4, B3, B2) — desde 2015
+    # Resultado: fotografía en color natural, legible para periodistas.
     else:  # glacier
-        # Para "before": Landsat 8 si < 2017, Sentinel-2 si >= 2017
-        # Temporada: julio–septiembre (menos nieve, más hielo glaciar visible)
-        eff_before = max(before_year, 2013)   # Landsat 8 mínimo 2013
-        eff_after  = min(after_year, 2023)    # Sentinel-2 datos estables
+        eff_before = max(before_year, 1990)   # Landsat 5 mínimo fiable 1990
+        eff_after  = min(after_year,  2024)   # Sentinel-2 datos completos
 
-        if eff_before < 2017:
-            col_before = (
-                ee.ImageCollection("LANDSAT/LC08/C02/T1_L2")
-                .filterDate(f"{eff_before}-07-01", f"{eff_before}-09-30")
-                .filterBounds(bbox)
-                .select(["SR_B3", "SR_B6"])        # Green, SWIR
-                .map(lambda img: img.normalizedDifference(["SR_B3", "SR_B6"])
-                                    .rename("NDSI"))
-                .mean()
-            )
-            dataset_before = "LANDSAT/LC08/C02/T1_L2"
-        else:
-            col_before = (
-                ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
-                .filterDate(f"{eff_before}-07-01", f"{eff_before}-09-30")
-                .filterBounds(bbox)
-                .filter(ee.Filter.lt("CLOUDY_PIXEL_PERCENTAGE", 20))
-                .select(["B3", "B11"])              # Green, SWIR
-                .map(lambda img: img.normalizedDifference(["B3", "B11"])
-                                    .rename("NDSI"))
-                .mean()
-            )
-            dataset_before = "COPERNICUS/S2_SR_HARMONIZED"
+        # ANTES — Landsat 5 TOA, color real (B3=Rojo, B2=Verde, B1=Azul)
+        col_before = (
+            ee.ImageCollection("LANDSAT/LT05/C02/T1_TOA")
+            .filterDate(f"{eff_before}-07-01", f"{eff_before}-09-30")
+            .filterBounds(bbox)
+            .filter(ee.Filter.lt("CLOUD_COVER", 20))
+            .median()
+            .clip(bbox)
+        )
+        viz_before = {
+            "bands": ["B3", "B2", "B1"],
+            "min": 0, "max": 0.35, "gamma": 1.4
+        }
 
+        # DESPUÉS — Sentinel-2 Harmonized, color real (B4=Rojo, B3=Verde, B2=Azul)
         col_after = (
-            ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
+            ee.ImageCollection("COPERNICUS/S2_HARMONIZED")
             .filterDate(f"{eff_after}-07-01", f"{eff_after}-09-30")
             .filterBounds(bbox)
-            .filter(ee.Filter.lt("CLOUDY_PIXEL_PERCENTAGE", 20))
-            .select(["B3", "B11"])
-            .map(lambda img: img.normalizedDifference(["B3", "B11"])
-                                .rename("NDSI"))
-            .mean()
+            .filter(ee.Filter.lt("CLOUDY_PIXEL_PERCENTAGE", 15))
+            .median()
+            .clip(bbox)
         )
+        viz_after = {
+            "bands": ["B4", "B3", "B2"],
+            "min": 0, "max": 3200, "gamma": 1.4
+        }
 
-        viz          = {"min": -0.5, "max": 1.0,
-                        "palette": ["#7C3AED", "#1E293B", "#38BDF8", "#FFFFFF"]}
-        dataset      = "COPERNICUS/S2_SR_HARMONIZED"
-        layer        = "NDSI"
-        palette_info = "Blanco=Hielo/Nieve · Azul=Agua · Negro=Roca · Púrpura=Vegetación"
+        dataset      = "LANDSAT/LT05/C02/T1_TOA + COPERNICUS/S2_HARMONIZED"
+        layer        = "RGB_TrueColor"
+        palette_info = "Fotografía en color real · Blanco=Nieve/Hielo · Azul=Agua · Gris=Roca"
         year_before  = eff_before
         year_after   = eff_after
 
     # ── Generar thumbnails ────────────────────────────────────────────────────
-    before_url = col_before.visualize(**viz).getThumbURL(thumb_params)
-    after_url  = col_after.visualize(**viz).getThumbURL(thumb_params)
+    # Glaciar usa viz_before/viz_after separados (sensores distintos).
+    # Nieve y temperatura usan la misma paleta para ambas imágenes.
+  # ── Generar thumbnails (USANDO LA NUEVA FUNCIÓN OPTIMIZADA) ───────────────
+      if claim_type == "glacier":
+          before_url = _generate_thumb(col_before, bbox, viz_before)
+          after_url  = _generate_thumb(col_after, bbox, viz_after)
+      else:
+          before_url = _generate_thumb(col_before, bbox, viz)
+          after_url  = _generate_thumb(col_after, bbox, viz)
 
-    return {
-        "before_url":   before_url,
-        "after_url":    after_url,
-        "claim_type":   claim_type,
-        "layer":        layer,
-        "dataset":      dataset,
-        "palette_info": palette_info,
-        "years": {
-            "before": year_before,
-            "after":  year_after,
-        },
-        "location": {
-            "name": location_str,
-            "lat":  lat,
-            "lon":  lon,          # ← "lon" (no "lng") para que coincida con el frontend
-        },
-    }
+      return {
+          "before_url":   before_url,
+          "after_url":    after_url,
+          "claim_type":   claim_type,
+          "layer":        layer,
+          "dataset":      dataset,
+          "palette_info": palette_info,
+          "years": {
+              "before": year_before,
+              "after":  year_after,
+          },
+          "location": {
+              "name": location_str,
+              "lat":  lat,
+              "lon":  lon,
+          },
+      }
