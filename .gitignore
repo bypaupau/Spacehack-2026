@@ -6,3 +6,17 @@ node_modules/
 *.tif
 *.jpg
 dist/
+
+# IDE & OS files
+.idea/
+.DS_Store
+**/.DS_Store
+
+# Loose root-level files not needed in the repo
+Datasets.pdf
+Fake.csv
+True.csv
+Journals.pdf
+IbiLens_ResultPage_Blueprint.html
+Peak News_ FORMULACION DE LA IDEA (1).pdf
+desinformacion (1).py
