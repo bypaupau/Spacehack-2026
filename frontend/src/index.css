@@ -1,0 +1,231 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Peak News Design System — Scientific Newsroom ──────────────────────────── */
+:root {
+  /* Text hierarchy */
+  --ink:     #0D1F38;   /* deep alpine navy — headline authority */
+  --body:    #1A2E47;   /* navy-800 */
+  --muted:   #4A5A72;   /* cool slate — secondary text */
+  --ghost:   #8FA3BF;   /* icy gray — metadata / labels */
+
+  /* Surfaces — layered with depth, not borders */
+  --bg-page:   #F5F7FA;   /* barely off-white, cool tint */
+  --bg-card:   #FFFFFF;
+  --bg-subtle: #EEF2F7;   /* subtle tint for nested areas */
+
+  /* Structural borders — only for layout dividers, NOT cards */
+  --border:      #E4EAF2;
+  --border-dark: #C8D3E0;
+
+  /* Semantic — muted/pastel for verdicts */
+  --false:         #B91C1C;   /* warm red, less web-primary */
+  --false-bg:      #FFF5F5;
+  --false-border:  #FED7D7;
+
+  --verified:        #065F46;  /* deep emerald */
+  --verified-bg:     #F0FDF9;
+  --verified-border: #99E6C8;
+
+  --misleading:        #92400E;  /* burnt amber */
+  --misleading-bg:     #FFFBEB;
+  --misleading-border: #FDE68A;
+
+  --pending-bg:     #F5F7FA;
+  --pending-border: #E4EAF2;
+
+  /* Brand — deep alpine blue, more authoritative than sky */
+  --data:       #1D4ED8;   /* blue-700 */
+  --data-light: #EFF6FF;   /* blue-50 */
+  --data-mid:   #60A5FA;   /* blue-400 */
+
+  /* Top accent stripe */
+  --stripe: #2563EB;
+}
+
+/* ── Base ──────────────────────────────────────────────────────────────────── */
+html, body {
+  background-color: var(--bg-page);
+  color: var(--body);
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+/* ── Keyframes ─────────────────────────────────────────────────────────────── */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.animate-slide-up  { animation: slideUp  0.45s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.animate-fade-in   { animation: fadeIn   0.35s ease both; }
+.animate-pulse-soft { animation: pulse 3s ease-in-out infinite; }
+
+/* ── Typography utilities ──────────────────────────────────────────────────── */
+@layer components {
+
+  /* Editorial / display — Playfair Display for headline authority */
+  .font-editorial {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  /* Label — monospace for data/technical precision */
+  .font-label {
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    font-size: 0.6875rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .font-caption {
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    font-size: 0.5625rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+  }
+
+  /*
+   * ── Card: depth through shadow only — zero visible border ────────────────
+   * This is the core anti-box-itis rule. Cards float on the page via shadow,
+   * not by drawing a rectangle around themselves.
+   */
+  .card {
+    background: var(--bg-card);
+    border-radius: 12px;
+    box-shadow:
+      0 1px 3px rgba(13, 28, 56, 0.04),
+      0 4px 16px rgba(13, 28, 56, 0.06);
+  }
+
+  .card-hover {
+    @apply transition-all duration-200 cursor-pointer;
+  }
+  .card-hover:hover {
+    box-shadow:
+      0 6px 24px rgba(13, 28, 56, 0.10),
+      0 2px 6px rgba(13, 28, 56, 0.05);
+    transform: translateY(-1px);
+  }
+
+  /* ── Kicker tag ─────────────────────────────────────────────────────────── */
+  .kicker {
+    @apply inline-block px-2.5 py-0.5 text-[9px] tracking-widest uppercase;
+    font-family: 'IBM Plex Mono', monospace;
+    background: var(--data-light);
+    color: var(--data);
+    border-radius: 4px;
+    font-weight: 600;
+  }
+
+  /*
+   * ── Section label: spacing + color contrast, no divider line ────────────
+   * Gestalt proximity does the grouping — no border needed.
+   */
+  .section-label {
+    @apply pb-0 mb-4 text-[9px] tracking-widest uppercase;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--ghost);
+  }
+
+  /* ── Input ──────────────────────────────────────────────────────────────── */
+  .input-editorial {
+    @apply w-full px-4 py-3 text-sm outline-none;
+    background: var(--bg-card);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 400;
+    color: var(--ink);
+    transition: border-color 0.18s, box-shadow 0.18s;
+  }
+  .input-editorial::placeholder { color: var(--ghost); }
+  .input-editorial:focus {
+    border-color: var(--data);
+    box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.10);
+  }
+
+  /* ── Primary button ─────────────────────────────────────────────────────── */
+  .btn-primary {
+    @apply px-5 py-2.5 text-[11px] tracking-wider uppercase whitespace-nowrap;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    background: var(--data);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 2px 8px rgba(29, 78, 216, 0.25);
+  }
+  .btn-primary:hover:not(:disabled)  { background: #1e40af; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(29,78,216,0.30); }
+  .btn-primary:active:not(:disabled) { transform: translateY(0); }
+  .btn-primary:disabled { background: #CBD5E1; cursor: not-allowed; box-shadow: none; }
+
+  /* ── Ghost button ───────────────────────────────────────────────────────── */
+  .btn-ghost {
+    @apply px-4 py-2 text-[11px] tracking-wider uppercase;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    background: transparent;
+    color: var(--muted);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-ghost:hover { color: var(--data); background: var(--data-light); }
+
+  /* ── Progress bar ───────────────────────────────────────────────────────── */
+  .progress-bar {
+    @apply h-1.5 rounded-sm overflow-hidden;
+    background: var(--bg-subtle);
+  }
+  .progress-fill {
+    @apply h-full rounded-sm;
+    transition: width 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* ── Verdict semantic colors ─────────────────────────────────────────────── */
+  .verdict-stripe-false      { background: var(--false);      }
+  .verdict-stripe-verified   { background: var(--verified);   }
+  .verdict-stripe-misleading { background: var(--misleading); }
+  .verdict-stripe-pending    { background: var(--ghost);      }
+
+  .score-false      { color: var(--false);      }
+  .score-verified   { color: var(--verified);   }
+  .score-misleading { color: var(--misleading); }
+
+  /* ── Stat number ─────────────────────────────────────────────────────────── */
+  .stat-number {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 4vw, 38px);
+    font-weight: 800;
+    line-height: 1;
+    color: var(--ink);
+  }
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-dark); border-radius: 4px; }
+
+/* ── Selection ─────────────────────────────────────────────────────────────── */
+::selection { background: rgba(29, 78, 216, 0.12); color: var(--ink); }
