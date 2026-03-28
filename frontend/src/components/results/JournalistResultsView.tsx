@@ -11,18 +11,17 @@
 //   - Zero purple, zero box-itis
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { useState }            from 'react'
+import { useState, useRef, useCallback } from 'react'
 import {
   Brain, BookOpen, FileSearch, Newspaper,
   ExternalLink, AlertTriangle, CheckCircle2, AlertCircle, Clock,
   Layers, ArrowLeft, ArrowRight, Satellite, Repeat2, Heart, MessageCircle,
-  ArrowUp, ChevronDown, ChevronUp, PlayCircle, type LucideIcon
+  ArrowUp, ChevronLeft, ChevronRight, PlayCircle, X, type LucideIcon
 } from 'lucide-react'
 import type { Analysis, VerdictType, SourceCardData } from '../../types'
 import { SatelliteMap }     from '../map/SatelliteMap'
 import { SatelliteCompare } from '../map/SatelliteCompare'
 import { TrendChart }       from '../map/TrendChart'
-import { JournalsPanel }    from './JournalsPanel'
 
 // ── Verdict config ─────────────────────────────────────────────────────────────
 const VC: Record<VerdictType, {
@@ -380,43 +379,75 @@ function RelatedMediaSection({ items }: { items: NonNullable<Analysis['relatedMe
   )
 }
 
-// ── CollapsibleSources ─────────────────────────────────────────────────────────
-function CollapsibleSources({ sources, journals }: { sources: Analysis['sources']; journals: React.ReactNode }) {
-  const [open, setOpen] = useState(false)
+// ── SourcesDrawer — right-side panel, no inline expansion ─────────────────────
+// The trigger button lives inline in the main content.
+// The drawer itself is a fixed overlay that slides in from the right.
+function SourcesDrawer({ sources, open, onClose }: {
+  sources: Analysis['sources']
+  open: boolean
+  onClose: () => void
+}) {
+  if (!open) return null
   return (
-    <div style={{ ...floatCard, overflow: 'hidden' }}>
-      <button
-        onClick={() => setOpen(s => !s)}
-        style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '10px', padding: '16px 20px', background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left' }}
-      >
-        <BookOpen size={14} strokeWidth={2} color="#4A5A72" />
-        <span style={{ flex: 1, fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: '#4A5A72', letterSpacing: '0.10em', textTransform: 'uppercase', fontWeight: 800 }}>
-          Fuentes utilizadas · {sources.length} repositorios + literatura peer-reviewed
-        </span>
-        {open
-          ? <ChevronUp   size={16} color="#8FA3BF" />
-          : <ChevronDown size={16} color="#8FA3BF" />
+    <>
+      {/* CSS keyframe injected once */}
+      <style>{`
+        @keyframes slideInRight {
+          from { transform: translateX(100%); opacity: 0.7; }
+          to   { transform: translateX(0);    opacity: 1; }
         }
-      </button>
-      {open && (
-        <div style={{ padding: '0 20px 20px', display: 'flex', flexDirection: 'column', gap: '20px', animation: 'fadeIn 0.2s ease' }}>
-          {/* Scientific sources */}
+      `}</style>
+
+      {/* Backdrop */}
+      <div
+        onClick={onClose}
+        style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(13,28,56,0.28)', backdropFilter: 'blur(2px)' }}
+      />
+
+      {/* Drawer panel */}
+      <div style={{
+        position: 'fixed', top: 0, right: 0, bottom: 0, zIndex: 201,
+        width: '420px', maxWidth: '92vw',
+        background: '#FFFFFF',
+        boxShadow: '-8px 0 40px rgba(13,28,56,0.14)',
+        overflowY: 'auto',
+        animation: 'slideInRight 0.22s cubic-bezier(0.16,1,0.3,1)',
+        display: 'flex', flexDirection: 'column',
+      }}>
+        {/* Header */}
+        <div style={{ padding: '20px 22px 16px', borderBottom: '1px solid #F0F4FA', display: 'flex', alignItems: 'center', gap: '10px', position: 'sticky', top: 0, background: '#FFFFFF', zIndex: 1 }}>
+          <BookOpen size={15} strokeWidth={2} color="#4A5A72" />
+          <span style={{ flex: 1, fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: '#4A5A72', letterSpacing: '0.10em', textTransform: 'uppercase', fontWeight: 800 }}>
+            Fuentes utilizadas
+          </span>
+          <button onClick={onClose} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '28px', height: '28px', borderRadius: '6px', background: '#F5F7FA', border: 'none', cursor: 'pointer', transition: 'background 0.14s' }}
+            onMouseEnter={e => (e.currentTarget.style.background = '#EEF2F7')}
+            onMouseLeave={e => (e.currentTarget.style.background = '#F5F7FA')}
+          >
+            <X size={14} color="#8FA3BF" />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div style={{ padding: '20px 22px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+
+          {/* Satellite sources */}
           <div>
-            <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', color: '#C8D3E0', letterSpacing: '0.07em', textTransform: 'uppercase', fontWeight: 700, marginBottom: '10px' }}>Datos satelitales y monitoreo</p>
+            <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', color: '#C8D3E0', letterSpacing: '0.07em', textTransform: 'uppercase', fontWeight: 700, marginBottom: '10px' }}>
+              Datos satelitales y monitoreo
+            </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              {sources.map((src, i) => <SourceChip key={src.name} n={i + 1} name={src.name} url={src.url} type={src.type} reliability={src.reliability} />)}
+              {sources.map((src, i) => (
+                <SourceChip key={src.name} n={i + 1} name={src.name} url={src.url} type={src.type} reliability={src.reliability} />
+              ))}
             </div>
           </div>
 
-          {/* Journals panel embedded */}
+          {/* Trusted repos — indexed journals */}
           <div>
-            <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', color: '#C8D3E0', letterSpacing: '0.07em', textTransform: 'uppercase', fontWeight: 700, marginBottom: '10px' }}>Literatura científica relevante</p>
-            {journals}
-          </div>
-
-          {/* Trusted repos */}
-          <div>
-            <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', color: '#C8D3E0', letterSpacing: '0.07em', textTransform: 'uppercase', fontWeight: 700, marginBottom: '10px' }}>Repositorios de confianza</p>
+            <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', color: '#C8D3E0', letterSpacing: '0.07em', textTransform: 'uppercase', fontWeight: 700, marginBottom: '10px' }}>
+              Repositorios científicos de referencia
+            </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
               {TRUSTED_JOURNALS.map(j => (
                 <a key={j.abbr} href={j.url} target="_blank" rel="noopener noreferrer"
@@ -431,8 +462,220 @@ function CollapsibleSources({ sources, journals }: { sources: Analysis['sources'
               ))}
             </div>
           </div>
+
+          {/* Note */}
+          <p style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '12px', color: '#8FA3BF', lineHeight: 1.6, margin: 0 }}>
+            Todas las fuentes son públicas e independientes entre sí. La fiabilidad indicada (%) refleja el nivel de peer-review y replicabilidad según IFCN y CrossRef.
+          </p>
+        </div>
+      </div>
+    </>
+  )
+}
+
+// ── SourcesTrigger — inline button that opens the drawer ──────────────────────
+function SourcesTrigger({ sources, onOpen }: { sources: Analysis['sources']; onOpen: () => void }) {
+  return (
+    <div style={{ ...floatCard, overflow: 'hidden' }}>
+      <button
+        onClick={onOpen}
+        style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '10px', padding: '16px 20px', background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', transition: 'background 0.14s' }}
+        onMouseEnter={e => (e.currentTarget.style.background = '#F8FAFC')}
+        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+      >
+        <BookOpen size={14} strokeWidth={2} color="#4A5A72" />
+        <span style={{ flex: 1, fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: '#4A5A72', letterSpacing: '0.10em', textTransform: 'uppercase', fontWeight: 800 }}>
+          Fuentes utilizadas · {sources.length} repositorios + literatura peer-reviewed
+        </span>
+        <ChevronRight size={15} color="#8FA3BF" />
+      </button>
+    </div>
+  )
+}
+
+// ── IframeWidget — embed code generator for journalists ───────────────────────
+function IframeWidget({ analysisId }: { analysisId: string }) {
+  const [copied, setCopied] = useState(false)
+  const embedUrl  = `https://peaknews.app/embed/${analysisId}`
+  const iframeCode = `<iframe\n  src="${embedUrl}"\n  width="100%"\n  height="420"\n  frameborder="0"\n  loading="lazy"\n  title="Peak News Fact-Check"\n  allow="fullscreen"\n></iframe>`
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(iframeCode).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2200)
+    })
+  }
+
+  return (
+    <div style={{ ...floatCard, padding: '20px 22px' }}>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <FileSearch size={14} strokeWidth={2} color="#1D4ED8" />
+          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: '#4A5A72', letterSpacing: '0.10em', textTransform: 'uppercase', fontWeight: 800 }}>
+            Peak News Widget
+          </span>
+        </div>
+        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', color: '#8FA3BF', background: '#F0F4FA', padding: '3px 8px', borderRadius: '4px' }}>
+          Embed para tu redacción
+        </span>
+      </div>
+
+      <p style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '12px', color: '#4A5A72', lineHeight: 1.6, marginBottom: '12px' }}>
+        Copia este código <code style={{ fontFamily: "'IBM Plex Mono', monospace", background: '#F0F4FA', padding: '1px 4px', borderRadius: '3px', fontSize: '11px' }}>&lt;iframe&gt;</code> y pégalo en tu periódico digital para incrustar este fact-check verificado.
+      </p>
+
+      {/* Code block */}
+      <div style={{ position: 'relative', borderRadius: '8px', background: '#0D1F38', overflow: 'hidden' }}>
+        <pre style={{
+          margin: 0, padding: '14px 16px',
+          fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px',
+          color: '#A8C4E0', lineHeight: 1.7, overflowX: 'auto',
+          scrollbarWidth: 'thin', scrollbarColor: '#2A3F5F transparent',
+        }}>
+          <code>{iframeCode}</code>
+        </pre>
+
+        {/* Copy button */}
+        <button
+          onClick={handleCopy}
+          style={{
+            position: 'absolute', top: '10px', right: '10px',
+            background: copied ? '#065F46' : '#1D4ED8',
+            color: '#FFFFFF', border: 'none', borderRadius: '6px',
+            padding: '5px 12px', cursor: 'pointer',
+            fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px',
+            fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase',
+            transition: 'background 0.2s, transform 0.1s',
+            transform: copied ? 'scale(0.96)' : 'scale(1)',
+          }}
+        >
+          {copied ? '✓ Copiado' : 'Copiar'}
+        </button>
+      </div>
+
+      {/* Embed URL preview */}
+      <p style={{ marginTop: '10px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', color: '#8FA3BF' }}>
+        URL: <span style={{ color: '#1D4ED8' }}>{embedUrl}</span>
+      </p>
+    </div>
+  )
+}
+
+// ── CitizenTrustPoll — micro-survey at bottom of report ───────────────────────
+function CitizenTrustPoll({ analysisId }: { analysisId: string }) {
+  const storageKey = `poll_${analysisId}`
+  const [vote,     setVote]     = useState<'yes' | 'no' | null>(null)
+  const [yesCount, setYesCount] = useState(148)   // mock baseline
+  const [noCount,  setNoCount]  = useState(37)
+
+  const handleVote = (choice: 'yes' | 'no') => {
+    if (vote !== null) return   // already voted
+    setVote(choice)
+    if (choice === 'yes') setYesCount(c => c + 1)
+    else                  setNoCount(c => c + 1)
+    // In Phase 2 this would POST to /api/poll/{analysisId}
+    console.log(`[Peak News Poll] ${storageKey} → ${choice}`)
+  }
+
+  const total = yesCount + noCount
+  const yesPct = Math.round((yesCount / total) * 100)
+  const noPct  = 100 - yesPct
+
+  return (
+    <div style={{
+      ...floatCard,
+      padding: '22px 24px',
+      background: 'linear-gradient(135deg, #F0F7FF 0%, #EBF4FF 100%)',
+      border: '1px solid #BFDBFE',
+    }}>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: '16px' }}>
+        <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#1D4ED8', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <Heart size={15} strokeWidth={2} color="#FFFFFF" />
+        </div>
+        <div>
+          <p style={{ margin: '0 0 4px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', color: '#8FA3BF', letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 700 }}>
+            Índice de Confianza Ciudadana
+          </p>
+          <p style={{ margin: 0, fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '14px', fontWeight: 700, color: '#0D1F38', lineHeight: 1.35 }}>
+            ¿Ver esta imagen satelital cambió tu percepción sobre este tema?
+          </p>
+        </div>
+      </div>
+
+      {vote === null ? (
+        /* Voting buttons */
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button
+            onClick={() => handleVote('yes')}
+            style={{
+              flex: 1, padding: '12px 0',
+              background: '#FFFFFF', border: '1.5px solid #1D4ED8',
+              borderRadius: '8px', cursor: 'pointer',
+              fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '14px',
+              fontWeight: 700, color: '#1D4ED8',
+              transition: 'all 0.15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+            }}
+            onMouseEnter={e => { const el = e.currentTarget; el.style.background = '#1D4ED8'; el.style.color = '#FFFFFF' }}
+            onMouseLeave={e => { const el = e.currentTarget; el.style.background = '#FFFFFF'; el.style.color = '#1D4ED8' }}
+          >
+            👍 Sí
+          </button>
+          <button
+            onClick={() => handleVote('no')}
+            style={{
+              flex: 1, padding: '12px 0',
+              background: '#FFFFFF', border: '1.5px solid #CBD5E1',
+              borderRadius: '8px', cursor: 'pointer',
+              fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '14px',
+              fontWeight: 600, color: '#4A5A72',
+              transition: 'all 0.15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+            }}
+            onMouseEnter={e => { const el = e.currentTarget; el.style.background = '#F8FAFC'; el.style.borderColor = '#94A3B8' }}
+            onMouseLeave={e => { const el = e.currentTarget; el.style.background = '#FFFFFF'; el.style.borderColor = '#CBD5E1' }}
+          >
+            👎 No
+          </button>
+        </div>
+      ) : (
+        /* Results after voting */
+        <div>
+          <p style={{ margin: '0 0 12px', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '12px', color: '#4A5A72' }}>
+            Gracias por participar · {total.toLocaleString('es-ES')} respuestas
+          </p>
+
+          {/* Yes bar */}
+          <div style={{ marginBottom: '8px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+              <span style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '12px', fontWeight: vote === 'yes' ? 700 : 500, color: vote === 'yes' ? '#1D4ED8' : '#4A5A72' }}>
+                👍 Sí {vote === 'yes' && '← tu voto'}
+              </span>
+              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', fontWeight: 700, color: '#1D4ED8' }}>{yesPct}%</span>
+            </div>
+            <div style={{ height: '8px', borderRadius: '4px', background: '#DBEAFE', overflow: 'hidden' }}>
+              <div style={{ height: '100%', width: `${yesPct}%`, background: '#1D4ED8', borderRadius: '4px', transition: 'width 0.6s ease' }} />
+            </div>
+          </div>
+
+          {/* No bar */}
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+              <span style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '12px', fontWeight: vote === 'no' ? 700 : 500, color: vote === 'no' ? '#4A5A72' : '#94A3B8' }}>
+                👎 No {vote === 'no' && '← tu voto'}
+              </span>
+              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', fontWeight: 700, color: '#94A3B8' }}>{noPct}%</span>
+            </div>
+            <div style={{ height: '8px', borderRadius: '4px', background: '#F1F5F9', overflow: 'hidden' }}>
+              <div style={{ height: '100%', width: `${noPct}%`, background: '#94A3B8', borderRadius: '4px', transition: 'width 0.6s ease' }} />
+            </div>
+          </div>
         </div>
       )}
+
+      <p style={{ marginTop: '12px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', color: '#94A3B8', lineHeight: 1.5 }}>
+        Los resultados son anónimos y se usan para mejorar Peak News · Datos simulados en demo
+      </p>
     </div>
   )
 }
@@ -444,6 +687,25 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
   const analyzedDate = new Date(analysis.analyzedAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })
   const hasRealImages = !!(satellite.geeBeforeUrl && satellite.geeAfterUrl)
 
+  // ── Sources drawer state ────────────────────────────────────────────────────
+  const [sourcesOpen, setSourcesOpen] = useState(false)
+
+  // ── Chart scroll state ──────────────────────────────────────────────────────
+  const chartScrollRef = useRef<HTMLDivElement>(null)
+  const [canScrollLeft,  setCanScrollLeft]  = useState(false)
+  const [canScrollRight, setCanScrollRight] = useState(true)
+
+  const checkChartScroll = useCallback(() => {
+    const el = chartScrollRef.current
+    if (!el) return
+    setCanScrollLeft(el.scrollLeft > 4)
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4)
+  }, [])
+
+  const scrollCharts = (dir: 'left' | 'right') => {
+    chartScrollRef.current?.scrollBy({ left: dir === 'left' ? -270 : 270, behavior: 'smooth' })
+  }
+
   // Chart explanations based on chartUrls count
   const chartDescriptions = [
     { n: 1, text: 'Tendencia anual de cobertura nival (hectáreas). La línea naranja es la regresión lineal que confirma el descenso estadísticamente significativo a lo largo del período de estudio.' },
@@ -453,6 +715,10 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
   ]
 
   return (
+    <>
+    {/* Sources drawer — renders as fixed overlay outside normal flow */}
+    <SourcesDrawer sources={sources} open={sourcesOpen} onClose={() => setSourcesOpen(false)} />
+
     <div className="animate-slide-up" style={{ maxWidth: '1100px', margin: '0 auto' }}>
 
       {/* ── BACK ─────────────────────────────────────────────────────────────── */}
@@ -548,15 +814,48 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
               <p style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '13px', color: '#4A5A72', marginBottom: '14px', lineHeight: 1.5 }}>
                 Gráficos generados con Google Earth Engine a partir de datos Landsat 8 y Sentinel-2. Desplaza para ver el análisis completo.
               </p>
-              {/* Chart gallery */}
-              <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '8px', marginBottom: '18px' }}>
-                {satellite.chartUrls.map((url, i) => (
-                  <img key={i} src={url} alt={`Análisis GEE ${i + 1}`} onClick={() => window.open(url, '_blank')}
-                    style={{ height: '210px', width: 'auto', borderRadius: '10px', flexShrink: 0, cursor: 'zoom-in', boxShadow: '0 1px 4px rgba(13,28,56,0.06)', transition: 'box-shadow 0.15s, transform 0.15s' }}
-                    onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 6px 20px rgba(13,28,56,0.12)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
-                    onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 1px 4px rgba(13,28,56,0.06)'; e.currentTarget.style.transform = 'translateY(0)' }}
-                  />
-                ))}
+              {/* Chart gallery — scroll arrows + fade indicator */}
+              <div style={{ position: 'relative', marginBottom: '18px' }}>
+                {/* Left arrow */}
+                {canScrollLeft && (
+                  <button onClick={() => scrollCharts('left')}
+                    style={{ position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', zIndex: 2, width: '32px', height: '32px', borderRadius: '50%', background: '#FFFFFF', border: 'none', cursor: 'pointer', boxShadow: '0 2px 10px rgba(13,28,56,0.14)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'box-shadow 0.14s' }}
+                    onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 4px 16px rgba(13,28,56,0.20)')}
+                    onMouseLeave={e => (e.currentTarget.style.boxShadow = '0 2px 10px rgba(13,28,56,0.14)')}
+                  >
+                    <ChevronLeft size={16} color="#4A5A72" />
+                  </button>
+                )}
+
+                {/* Scrollable row */}
+                <div
+                  ref={chartScrollRef}
+                  onScroll={checkChartScroll}
+                  style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '8px', scrollbarWidth: 'none' }}
+                >
+                  <style>{`.chart-scroll::-webkit-scrollbar { display: none; }`}</style>
+                  {satellite.chartUrls.map((url, i) => (
+                    <img key={i} src={url} alt={`Análisis GEE ${i + 1}`} onClick={() => window.open(url, '_blank')}
+                      style={{ height: '210px', width: 'auto', borderRadius: '10px', flexShrink: 0, cursor: 'zoom-in', boxShadow: '0 1px 4px rgba(13,28,56,0.06)', transition: 'box-shadow 0.15s, transform 0.15s' }}
+                      onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 6px 20px rgba(13,28,56,0.12)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+                      onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 1px 4px rgba(13,28,56,0.06)'; e.currentTarget.style.transform = 'translateY(0)' }}
+                    />
+                  ))}
+                </div>
+
+                {/* Right fade gradient + arrow */}
+                {canScrollRight && (
+                  <>
+                    <div style={{ position: 'absolute', right: 0, top: 0, bottom: 8, width: '72px', background: 'linear-gradient(to right, transparent, #FFFFFF)', pointerEvents: 'none', borderRadius: '0 10px 10px 0' }} />
+                    <button onClick={() => scrollCharts('right')}
+                      style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', zIndex: 2, width: '32px', height: '32px', borderRadius: '50%', background: '#FFFFFF', border: 'none', cursor: 'pointer', boxShadow: '0 2px 10px rgba(13,28,56,0.14)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'box-shadow 0.14s' }}
+                      onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 4px 16px rgba(13,28,56,0.20)')}
+                      onMouseLeave={e => (e.currentTarget.style.boxShadow = '0 2px 10px rgba(13,28,56,0.14)')}
+                    >
+                      <ChevronRight size={16} color="#4A5A72" />
+                    </button>
+                  </>
+                )}
               </div>
 
               {/* Numbered chart explanations — exactly like the wireframe */}
@@ -628,13 +927,19 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
             </div>
           </div>
 
-          {/* ── COLLAPSIBLE SOURCES (antes de related news — son cosas distintas) ── */}
-          <CollapsibleSources sources={sources} journals={<JournalsPanel claimText={input} />} />
+          {/* ── SOURCES TRIGGER — opens right-side drawer ────────────────────── */}
+          <SourcesTrigger sources={sources} onOpen={() => setSourcesOpen(true)} />
 
           {/* ── RELATED MEDIA ────────────────────────────────────────────────── */}
           {relatedMedia && relatedMedia.length > 0 && (
             <RelatedMediaSection items={relatedMedia} />
           )}
+
+          {/* ── IFRAME WIDGET ────────────────────────────────────────────────── */}
+          <IframeWidget analysisId={analysis.id} />
+
+          {/* ── CITIZEN TRUST POLL ───────────────────────────────────────────── */}
+          <CitizenTrustPoll analysisId={analysis.id} />
 
         </div>
 
@@ -720,5 +1025,6 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
         </div>
       </div>
     </div>
+    </>
   )
 }

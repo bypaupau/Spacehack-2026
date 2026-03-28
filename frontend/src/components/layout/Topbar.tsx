@@ -51,8 +51,8 @@ export function Topbar({ activePage = 'verify', onNavigate, onLogoClick, sidebar
                 >
                     <Logo size={32} />
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-            <span style={{ fontFamily: "'Playfair Display', serif", fontWeight: 800, fontSize: '18px', letterSpacing: '-0.02em', color: '#0F172A', lineHeight: 1 }}>
-              PEAK NEWS
+            <span style={{ fontFamily: "'Playfair Display', serif", fontWeight: 600, fontSize: '18px', letterSpacing: '-0.02em', color: '#0F172A', lineHeight: 1 }}>
+              Peak News
             </span>
                         <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '8px', color: '#64748B', letterSpacing: '0.12em', textTransform: 'uppercase', marginTop: '3px' }}>
               Alpine Fact Checker
