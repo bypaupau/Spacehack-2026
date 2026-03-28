@@ -794,6 +794,7 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
           </div>
 
           {/* ── SATELLITE IMAGES ─────────────────────────────────────────────── */}
+          {/* ── SATELLITE IMAGES ─────────────────────────────────────────────── */}
           <div style={{ ...floatCard, padding: '20px 24px' }}>
             <SectionLabel icon={Satellite}>Satellite Evidence · Temporal Comparison</SectionLabel>
             {hasRealImages && satellite.geeBeforeUrl && satellite.geeAfterUrl ? (
@@ -806,10 +807,9 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
                 />
             ) : (
                 <SatelliteCompare
-                    claimText={input}
+                    beforeUrl={satellite.geeBeforeUrl || '/satellite/default_before.jpg'}
+                    afterUrl={satellite.geeAfterUrl || '/satellite/default_after.jpg'}
                     location={satellite.images?.[0]?.location ?? 'Swiss Alps'}
-                    beforeYear={satellite.baselineYear ?? 1990}
-                    afterYear={2024}
                 />
             )}
           </div>
