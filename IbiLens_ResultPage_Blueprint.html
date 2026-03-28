@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>IbiLens — Blueprint: Página de Resultados</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #1E293B;
+    --muted: #64748B;
+    --ghost: #94A3B8;
+    --border: rgba(226,232,240,0.7);
+    --sky: #38BDF8;
+    --sky-dark: #0284C7;
+    --sky-light: #E0F2FE;
+    --red: #F87171;
+    --red-light: #FFF1F2;
+    --green: #34D399;
+    --green-light: #ECFDF5;
+    --amber: #FBBF24;
+    --amber-light: #FFFBEB;
+    --bg: #FDF8F4;
+  }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ── Annotation badge ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 100px;
+    font-weight: 500;
+  }
+  .badge-phase1 { background: rgba(52,211,153,0.12); color: #059669; border: 1px solid rgba(52,211,153,0.3); }
+  .badge-phase2 { background: rgba(251,191,36,0.12); color: #B45309; border: 1px solid rgba(251,191,36,0.3); }
+  .badge-ux     { background: rgba(56,189,248,0.12);  color: #0284C7; border: 1px solid rgba(56,189,248,0.3); }
+
+  /* ── Legend ── */
+  .legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 12px 20px;
+    background: rgba(255,255,255,0.8);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    margin-bottom: 24px;
+    font-size: 11px;
+  }
+  .legend-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ghost);
+    margin-right: 4px;
+  }
+
+  /* ── Wireframe blocks ── */
+  .wire {
+    border-radius: 20px;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(16px);
+    border: 1.5px solid rgba(226,232,240,0.8);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+    overflow: hidden;
+  }
+  .wire-dashed {
+    border-style: dashed;
+    border-color: rgba(56,189,248,0.4);
+    background: rgba(240,249,255,0.5);
+  }
+  .wire-dashed-amber {
+    border-style: dashed;
+    border-color: rgba(251,191,36,0.4);
+    background: rgba(255,251,235,0.5);
+  }
+
+  /* ── Component label ── */
+  .comp-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 8.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ghost);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .comp-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── Skeleton lines ── */
+  .skel {
+    height: 10px;
+    border-radius: 100px;
+    background: linear-gradient(90deg, rgba(226,232,240,0.7) 0%, rgba(241,245,249,0.5) 100%);
+    margin-bottom: 8px;
+  }
+  .skel.short  { width: 40%; }
+  .skel.medium { width: 65%; }
+  .skel.long   { width: 88%; }
+  .skel.full   { width: 100%; }
+  .skel.title  { height: 16px; width: 72%; }
+  .skel.thin   { height: 7px; }
+
+  /* ── Topbar ── */
+  .topbar {
+    background: rgba(253,248,244,0.92);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(226,232,240,0.4);
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 0;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+  }
+  .nav-pill-active {
+    background: rgba(14,165,233,0.1);
+    color: #0284C7;
+    border: 1px solid rgba(14,165,233,0.3);
+    border-radius: 100px;
+    padding: 4px 14px;
+    font-size: 10px;
+    font-weight: 700;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .nav-pill {
+    color: #94A3B8;
+    padding: 4px 14px;
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* ── Verdict header ── */
+  .verdict-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(248,113,113,0.1) 0%, rgba(248,113,113,0.03) 100%);
+    border: 1.5px solid rgba(252,165,165,0.4);
+    box-shadow: 0 4px 20px rgba(248,113,113,0.08);
+  }
+  .verdict-emoji { font-size: 24px; }
+  .verdict-text {
+    font-size: 22px;
+    font-weight: 900;
+    color: #EF4444;
+    letter-spacing: -0.02em;
+  }
+  .verdict-score {
+    margin-left: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    background: rgba(254,226,226,0.9);
+    color: #DC2626;
+    border: 1px solid rgba(252,165,165,0.5);
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-weight: 600;
+  }
+  .score-bar-track {
+    height: 6px;
+    border-radius: 100px;
+    background: rgba(226,232,240,0.5);
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 100px;
+    background: linear-gradient(90deg, #F87171, #FCA5A5);
+    width: 23%;
+    transition: width 1s;
+  }
+
+  /* ── LLM Response box ── */
+  .llm-box {
+    padding: 20px 22px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.9);
+    border: 1.5px solid rgba(226,232,240,0.7);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+  }
+  .llm-icon {
+    width: 28px; height: 28px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #0EA5E9, #38BDF8);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    box-shadow: 0 3px 10px rgba(14,165,233,0.25);
+    flex-shrink: 0;
+  }
+  .llm-para {
+    font-size: 13px;
+    line-height: 1.75;
+    color: #334155;
+    font-weight: 400;
+  }
+  .llm-highlight {
+    background: rgba(248,113,113,0.1);
+    color: #DC2626;
+    border-radius: 4px;
+    padding: 0 3px;
+    font-weight: 600;
+  }
+  .llm-highlight-green {
+    background: rgba(52,211,153,0.1);
+    color: #059669;
+    border-radius: 4px;
+    padding: 0 3px;
+    font-weight: 600;
+  }
+
+  /* ── Map placeholder ── */
+  .map-box {
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1.5px solid rgba(186,230,253,0.6);
+    box-shadow: 0 4px 20px rgba(14,165,233,0.07);
+    background: linear-gradient(135deg, #E0F2FE 0%, #BAE6FD 40%, #7DD3FC 100%);
+    position: relative;
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .map-overlay {
+    background: linear-gradient(to top, rgba(14,31,55,0.7), transparent);
+    padding: 16px;
+  }
+  .map-controls {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .map-btn {
+    width: 28px; height: 28px;
+    background: rgba(255,255,255,0.92);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+    border: 1px solid rgba(226,232,240,0.6);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
+  .map-label {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(255,255,255,0.9);
+    border-radius: 10px;
+    padding: 5px 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    color: #0284C7;
+    border: 1px solid rgba(186,230,253,0.5);
+    text-transform: uppercase;
+  }
+  /* Fake Alps silhouette */
+  .alps-svg { width: 100%; opacity: 0.3; }
+
+  /* ── Journal cards ── */
+  .journal-card {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: rgba(248,250,252,0.9);
+    border: 1px solid rgba(226,232,240,0.6);
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .journal-card:hover {
+    border-color: rgba(186,230,253,0.6);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    transform: translateX(2px);
+  }
+  .journal-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 100px;
+    white-space: nowrap;
+    font-weight: 500;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .tag-nature  { background: rgba(52,211,153,0.12); color: #059669; border: 1px solid rgba(52,211,153,0.3); }
+  .tag-science { background: rgba(56,189,248,0.12);  color: #0284C7; border: 1px solid rgba(56,189,248,0.3); }
+  .tag-ipcc    { background: rgba(251,191,36,0.12); color: #B45309; border: 1px solid rgba(251,191,36,0.3); }
+  .tag-copernicus { background: rgba(167,139,250,0.12); color: #7C3AED; border: 1px solid rgba(167,139,250,0.3); }
+
+  .journal-title { font-size: 12px; font-weight: 700; color: #1E293B; line-height: 1.4; margin-bottom: 3px; }
+  .journal-meta  { font-family: 'DM Mono', monospace; font-size: 9px; color: #94A3B8; letter-spacing: 0.05em; }
+  .journal-rel   { font-size: 10px; color: #64748B; margin-top: 4px; line-height: 1.5; }
+
+  .reliability-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+
+  /* ── Annotation tooltip ── */
+  .annotation {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--ghost);
+    margin-bottom: 8px;
+  }
+  .annotation-line {
+    height: 1px;
+    background: linear-gradient(90deg, rgba(226,232,240,0.8), transparent);
+    margin: 16px 0 14px;
+  }
+
+  /* ── Annotation arrow ── */
+  .arrow-note {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: #0284C7;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 6px;
+  }
+
+  /* ── Main wrapper ── */
+  .page-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 0 60px;
+  }
+
+  .content-area {
+    padding: 20px 24px;
+  }
+
+  /* ── Section header ── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .section-icon {
+    width: 26px; height: 26px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-size: 11px;
+    font-weight: 800;
+    color: #1E293B;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── Search compact bar ── */
+  .search-bar {
+    display: flex;
+    gap: 8px;
+    padding: 12px 24px;
+    background: rgba(253,248,244,0.6);
+    border-bottom: 1px solid rgba(226,232,240,0.4);
+  }
+  .search-input {
+    flex: 1;
+    background: rgba(255,255,255,0.9);
+    border: 1.5px solid rgba(186,230,253,0.5);
+    border-radius: 100px;
+    padding: 8px 16px 8px 36px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    color: #1E293B;
+    position: relative;
+  }
+  .search-btn {
+    background: linear-gradient(135deg, #0EA5E9, #38BDF8);
+    color: #fff;
+    border: none;
+    border-radius: 100px;
+    padding: 8px 20px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 12px;
+    cursor: pointer;
+    box-shadow: 0 3px 12px rgba(14,165,233,0.25);
+  }
+
+  /* ── Removed section note ── */
+  .removed-note {
+    background: rgba(255,241,242,0.6);
+    border: 1.5px dashed rgba(252,165,165,0.5);
+    border-radius: 16px;
+    padding: 12px 16px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-top: 8px;
+  }
+
+  /* ── Two col grid ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  /* ── Full width headline ── */
+  .headline-text {
+    font-size: 18px;
+    font-weight: 900;
+    color: #1E293B;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+  }
+  .headline-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: #94A3B8;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+
+  /* ── Outer page bg ── */
+  .outer-bg {
+    background: linear-gradient(-45deg, #BAE6FD, #FEF3E2, #F0FDF4, #EFF6FF);
+    background-size: 400% 400%;
+    animation: grad 20s ease infinite;
+    min-height: 100vh;
+  }
+  @keyframes grad {
+    0%,100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  /* page header meta */
+  .meta-bar {
+    background: rgba(30, 41, 59, 0.95);
+    color: rgba(255,255,255,0.7);
+    padding: 8px 24px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .meta-bar .sep { opacity: 0.3; }
+  .meta-highlight { color: #38BDF8; }
+</style>
+</head>
+<body>
+<div class="outer-bg">
+<div class="page-wrapper">
+
+  <!-- ── META BAR (blueprint header) ────────── -->
+  <div class="meta-bar">
+    <span>🗺️ IbiLens</span>
+    <span class="sep">|</span>
+    <span class="meta-highlight">Blueprint: Página de Resultados</span>
+    <span class="sep">|</span>
+    <span>Para periodistas climáticos</span>
+    <span class="sep">|</span>
+    <span style="margin-left:auto;">Fase 1 → mockup · Fase 2 → datos reales</span>
+  </div>
+
+  <div class="content-area">
+
+    <!-- ── LEGEND ──────────────────────────────── -->
+    <div class="legend">
+      <span class="legend-title">Leyenda</span>
+      <span class="badge badge-phase1">✓ Fase 1 — ya existe / mockup</span>
+      <span class="badge badge-phase2">⚡ Fase 2 — requiere backend</span>
+      <span class="badge badge-ux">🔵 Decisión UX</span>
+    </div>
+
+    <!-- ── 1. TOPBAR ─────────────────────────────── -->
+    <div class="annotation">
+      <span>01</span>
+      <span>Topbar — sin cambios</span>
+    </div>
+    <div class="topbar wire" style="border-radius: 16px; margin-bottom: 4px;">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <img src="" style="width:28px; height:28px; border-radius:50%; background:rgba(186,230,253,0.4);"/>
+        <span style="font-size:15px; font-weight:900; color:#1E293B;">IbiLens</span>
+      </div>
+      <nav style="display:flex; gap:4px;">
+        <span class="nav-pill-active">Verificar</span>
+        <span class="nav-pill">Historial</span>
+        <span class="nav-pill">Fuentes</span>
+        <span class="nav-pill">Metodología</span>
+      </nav>
+      <div style="display:flex; align-items:center; gap:6px;">
+        <span style="width:6px;height:6px;border-radius:50%;background:#34D399;display:inline-block;"></span>
+        <span style="font-family:'DM Mono',monospace;font-size:9px;color:#94A3B8;">Live · Alpes Suizos</span>
+      </div>
+    </div>
+    <div class="arrow-note" style="margin-bottom: 20px;">
+      <span class="badge badge-ux">UX</span>
+      La sección de historial se mueve al tab "Historial" — desaparece del flujo principal de resultados
+    </div>
+
+    <!-- ── 2. COMPACT SEARCH ──────────────────── -->
+    <div class="annotation"><span>02</span><span>Barra de búsqueda compacta</span></div>
+    <div class="wire" style="margin-bottom: 4px; padding: 12px 20px; border-radius: 16px;">
+      <div style="display:flex; gap:8px; align-items:center;">
+        <span style="color:#94A3B8; font-size:14px;">🔍</span>
+        <div class="search-input" style="flex:1; font-size:12px; color:#94A3B8; padding:6px 12px;">
+          Los glaciares suizos crecen gracias a las bajas temperaturas
+        </div>
+        <div class="search-btn" style="padding:6px 16px; font-size:11px;">Nueva verificación →</div>
+      </div>
+    </div>
+    <div class="arrow-note" style="margin-bottom: 20px;">
+      <span class="badge badge-phase1">✓ Fase 1</span>
+      Ya implementado — permite relanzar análisis sin volver al hero
+    </div>
+
+    <!-- ── 3. VEREDICTO ──────────────────────── -->
+    <div class="annotation"><span>03</span><span>Veredicto + Score — arriba del todo, primera impresión</span></div>
+    <div style="margin-bottom: 4px;">
+      <div class="verdict-bar">
+        <span class="verdict-emoji">🔴</span>
+        <div>
+          <div class="verdict-text">FALSO</div>
+          <div class="headline-text">Los glaciares suizos crecen gracias a las bajas temperaturas</div>
+          <div class="headline-meta">Analizado: 27 mar 2026 · Sentinel-2 + GLAMOS · 3 fuentes científicas</div>
+        </div>
+        <div class="verdict-score">19 / 100</div>
+      </div>
+      <div class="score-bar-track" style="margin-top: 6px; border-radius: 0 0 10px 10px;">
+        <div class="score-bar-fill"></div>
+      </div>
+    </div>
+    <div class="arrow-note" style="margin-bottom: 20px;">
+      <span class="badge badge-phase1">✓ Fase 1</span>
+      Rediseñado — headline prominente, el veredicto es lo PRIMERO que ve el periodista
+    </div>
+
+    <!-- ── 4. RESPUESTA LLM ───────────────────── -->
+    <div class="annotation"><span>04</span><span>Respuesta narrativa del LLM — el "por qué"</span></div>
+    <div class="llm-box" style="margin-bottom: 4px;">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom: 14px;">
+        <div class="llm-icon">🔬</div>
+        <div>
+          <div style="font-size:11px; font-weight:800; color:#1E293B;">Análisis IbiLens</div>
+          <div style="font-family:'DM Mono',monospace; font-size:9px; color:#94A3B8; letter-spacing:0.06em; text-transform:uppercase;">Generado con Claude · verificado con datos satelitales</div>
+        </div>
+        <div style="margin-left:auto;" class="badge badge-phase2">⚡ Fase 2 → LLM real</div>
+      </div>
+      <p class="llm-para">
+        La afirmación es <span class="llm-highlight">categóricamente falsa</span> según los datos satelitales Sentinel-2 y los registros del
+        programa de monitoreo glaciar suizo GLAMOS. Los datos muestran un retroceso glaciar sostenido de
+        <span class="llm-highlight">62 m/año</span> en el período 2015–2024, con la cobertura de nieve reduciéndose
+        del 78% al 55% — una disminución del 23 puntos porcentuales.
+      </p>
+      <p class="llm-para" style="margin-top:10px;">
+        Si bien se registraron bajas temperaturas puntuales en enero de 2024,
+        <span class="llm-highlight-green">la ciencia del clima establece</span> que el balance de masa glaciar anual no
+        puede revertirse por eventos meteorológicos de corto plazo. El IPCC AR6 (2021) confirma que los Alpes
+        han perdido el 50% de su volumen glaciar desde 1900, y las proyecciones indican pérdidas del 80–95%
+        para 2100 bajo escenarios de emisiones medias.
+      </p>
+
+      <!-- Afirmaciones detectadas inline -->
+      <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(226,232,240,0.5);">
+        <div style="font-family:'DM Mono',monospace; font-size:9px; color:#94A3B8; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:8px;">Afirmaciones detectadas</div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <div style="display:flex; gap:8px; align-items:flex-start; font-size:11.5px; color:#334155;">
+            <span style="color:#38BDF8; font-family:'DM Mono',monospace; font-size:9px; flex-shrink:0; margin-top:2px;">01</span>
+            <span>"Los glaciares suizos están creciendo" — <strong style="color:#EF4444;">REFUTADO por GLAMOS 2024</strong></span>
+          </div>
+          <div style="display:flex; gap:8px; align-items:flex-start; font-size:11.5px; color:#334155;">
+            <span style="color:#38BDF8; font-family:'DM Mono',monospace; font-size:9px; flex-shrink:0; margin-top:2px;">02</span>
+            <span>"Bajas temperaturas causan crecimiento glaciar" — <strong style="color:#D97706;">SIMPLIFICACIÓN ENGAÑOSA</strong></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="arrow-note" style="margin-bottom: 20px;">
+      <span class="badge badge-phase2">⚡ Fase 2</span>
+      LLM (Claude/OpenAI) genera la narrativa · La estructura de afirmaciones numeradas ya existe en Fase 1
+    </div>
+
+    <!-- ── 5. MAPA + JOURNALS (layout 2 col) ─── -->
+    <div class="annotation"><span>05</span><span>Evidencia geoespacial + Literatura científica — layout side by side</span></div>
+    <div class="two-col" style="margin-bottom: 4px;">
+
+      <!-- MAPA GEE -->
+      <div>
+        <div class="section-header">
+          <div class="section-icon" style="background:rgba(224,242,254,0.8); border:1px solid rgba(186,230,253,0.5);">🛰️</div>
+          <span class="section-title">Mapa satelital GEE</span>
+          <span class="badge badge-phase2" style="margin-left:auto;">⚡ Fase 2</span>
+        </div>
+        <div class="map-box">
+          <!-- Fake Alps terrain as SVG -->
+          <svg class="alps-svg" viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg" style="position:absolute;bottom:50px;left:0;right:0;">
+            <path d="M0,180 L30,120 L70,90 L100,110 L130,60 L160,80 L200,30 L240,55 L270,40 L300,70 L340,50 L370,80 L400,60 L400,180 Z"
+                  fill="rgba(15,40,80,0.4)" stroke="rgba(125,211,252,0.3)" stroke-width="1"/>
+            <path d="M0,180 L50,140 L90,130 L120,150 L150,100 L180,120 L210,80 L250,95 L280,90 L310,120 L350,100 L400,130 L400,180 Z"
+                  fill="rgba(10,30,60,0.3)"/>
+            <!-- Snow caps -->
+            <path d="M200,30 L185,55 L215,55 Z" fill="rgba(255,255,255,0.6)"/>
+            <path d="M270,40 L258,60 L282,60 Z" fill="rgba(255,255,255,0.5)"/>
+            <path d="M130,60 L120,76 L140,76 Z" fill="rgba(255,255,255,0.4)"/>
+          </svg>
+
+          <!-- Glacier retreat overlay indicator -->
+          <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center;">
+            <div style="width:60px;height:60px;border-radius:50%;border:2px dashed rgba(248,113,113,0.6);display:flex;align-items:center;justify-content:center;background:rgba(254,226,226,0.15);backdrop-filter:blur(4px);">
+              <span style="font-size:10px;font-family:'DM Mono',monospace;color:#FCA5A5;letter-spacing:0.05em;text-align:center;line-height:1.3;">62m<br/>retreat</span>
+            </div>
+          </div>
+
+          <!-- Map controls -->
+          <div class="map-controls">
+            <div class="map-btn">+</div>
+            <div class="map-btn">−</div>
+            <div class="map-btn">🗺</div>
+          </div>
+
+          <!-- Map label -->
+          <div class="map-label">🛰 Sentinel-2 · 2024</div>
+
+          <!-- Map overlay info -->
+          <div class="map-overlay">
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <div style="background:rgba(0,0,0,0.4);backdrop-filter:blur(8px);border-radius:8px;padding:5px 10px;">
+                <div style="font-family:'DM Mono',monospace;font-size:8px;color:rgba(186,230,253,0.7);letter-spacing:0.07em;text-transform:uppercase;">Nieve</div>
+                <div style="font-size:14px;font-weight:800;color:#BAE6FD;">55%</div>
+              </div>
+              <div style="background:rgba(0,0,0,0.4);backdrop-filter:blur(8px);border-radius:8px;padding:5px 10px;">
+                <div style="font-family:'DM Mono',monospace;font-size:8px;color:rgba(186,230,253,0.7);letter-spacing:0.07em;text-transform:uppercase;">NDVI</div>
+                <div style="font-size:14px;font-weight:800;color:#86EFAC;">0.31</div>
+              </div>
+              <div style="background:rgba(0,0,0,0.4);backdrop-filter:blur(8px);border-radius:8px;padding:5px 10px;">
+                <div style="font-family:'DM Mono',monospace;font-size:8px;color:rgba(186,230,253,0.7);letter-spacing:0.07em;text-transform:uppercase;">Retroceso</div>
+                <div style="font-size:14px;font-weight:800;color:#FCA5A5;">−62m</div>
+              </div>
+            </div>
+            <div style="font-family:'DM Mono',monospace;font-size:8px;color:rgba(186,230,253,0.5);margin-top:6px;letter-spacing:0.06em;">
+              Alpes Suizos · Google Earth Engine · bandas NDSI/NDVI
+            </div>
+          </div>
+        </div>
+
+        <!-- Layer toggles -->
+        <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+          <span class="badge badge-phase2" style="font-size:8px; padding:3px 8px;">🌨 Capa nieve</span>
+          <span class="badge badge-phase2" style="font-size:8px; padding:3px 8px;">🏔 Glaciares</span>
+          <span class="badge badge-phase2" style="font-size:8px; padding:3px 8px;">📈 Tendencia 10a</span>
+        </div>
+      </div>
+
+      <!-- ARTÍCULOS CIENTÍFICOS -->
+      <div>
+        <div class="section-header">
+          <div class="section-icon" style="background:rgba(209,250,229,0.7); border:1px solid rgba(110,231,183,0.4);">📚</div>
+          <span class="section-title">Artículos científicos</span>
+          <span class="badge badge-phase2" style="margin-left:auto;">⚡ Fase 2</span>
+        </div>
+
+        <!-- Journal card 1 -->
+        <div class="journal-card">
+          <div class="reliability-dot" style="background:#34D399;"></div>
+          <div style="flex:1;">
+            <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:5px;">
+              <div class="journal-title">Accelerated glacier retreat in the Swiss Alps driven by climate warming (2015–2024)</div>
+              <span class="journal-tag tag-nature">Nature</span>
+            </div>
+            <div class="journal-meta">Zekollari et al. · Nature Climate Change · 2024 · DOI: 10.1038/ncc.2024</div>
+            <div class="journal-rel">Relevancia: documenta el retroceso sostenido de los glaciares alpinos pese a variaciones de temperatura invernal.</div>
+          </div>
+        </div>
+
+        <!-- Journal card 2 -->
+        <div class="journal-card">
+          <div class="reliability-dot" style="background:#34D399;"></div>
+          <div style="flex:1;">
+            <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:5px;">
+              <div class="journal-title">Global glacier mass change and its contribution to sea-level rise from 2000 to 2019</div>
+              <span class="journal-tag tag-science">Science</span>
+            </div>
+            <div class="journal-meta">Hugonnet et al. · Science · 2021 · DOI: 10.1126/science.abe4422</div>
+            <div class="journal-rel">Relevancia: datos globales de pérdida de masa glaciar confirmados por satélite.</div>
+          </div>
+        </div>
+
+        <!-- Journal card 3 -->
+        <div class="journal-card">
+          <div class="reliability-dot" style="background:#FBBF24;"></div>
+          <div style="flex:1;">
+            <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:5px;">
+              <div class="journal-title">IPCC AR6: Mountain glaciers and snow cover changes in European Alps</div>
+              <span class="journal-tag tag-ipcc">IPCC AR6</span>
+            </div>
+            <div class="journal-meta">IPCC Working Group I · Chapter 9 · 2021</div>
+            <div class="journal-rel">Relevancia: proyecciones de pérdida 80–95% en escenarios SSP2-4.5 y SSP5-8.5.</div>
+          </div>
+        </div>
+
+        <!-- Journal card 4 -->
+        <div class="journal-card">
+          <div class="reliability-dot" style="background:#34D399;"></div>
+          <div style="flex:1;">
+            <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:5px;">
+              <div class="journal-title">Copernicus Climate Change Service: Alpine Snow Cover Bulletin 2024</div>
+              <span class="journal-tag tag-copernicus">Copernicus</span>
+            </div>
+            <div class="journal-meta">C3S / ECMWF · Boletín trimestral · Q4 2024</div>
+            <div class="journal-rel">Relevancia: datos de cobertura nieve en tiempo real para los Alpes occidentales.</div>
+          </div>
+        </div>
+
+        <!-- "Ver más" -->
+        <div style="text-align:center; padding:8px 0 2px;">
+          <span style="font-family:'DM Mono',monospace;font-size:9px;color:#94A3B8;letter-spacing:0.07em;text-transform:uppercase;cursor:pointer;">
+            + 7 artículos más →
+          </span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="arrow-note" style="margin-bottom: 24px;">
+      <span class="badge badge-phase2">⚡ Fase 2</span>
+      Mapa: Google Earth Engine API (Python backend) · Artículos: Semantic Scholar API + filtrado por relevancia con embeddings
+    </div>
+
+    <!-- ── 6. SECCIÓN ELIMINADA ─────────────── -->
+    <div class="annotation"><span>06</span><span>❌ Sección eliminada del results view — movida a tab "Historial"</span></div>
+    <div class="removed-note">
+      <span style="font-size:18px;">🗑️</span>
+      <div>
+        <div style="font-size:12px; font-weight:700; color:#DC2626; margin-bottom:4px;">
+          AnalysisHistory — eliminado de la vista de resultados
+        </div>
+        <div style="font-size:11.5px; color:#64748B; line-height:1.6;">
+          El historial de análisis anteriores <strong>interrumpe el flujo cognitivo</strong> del periodista que está procesando un resultado.
+          Se mueve al tab <span style="font-family:'DM Mono',monospace;font-size:10px;background:rgba(14,165,233,0.1);color:#0284C7;padding:1px 6px;border-radius:4px;">Historial</span>
+          en el Topbar, donde tiene sentido conceptualmente.
+          El resultado actual debe ser el <strong>único foco de atención</strong>.
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SUMMARY DE COMPONENTES ──────────── -->
+    <div class="annotation-line"></div>
+    <div class="annotation"><span>—</span><span>Resumen de componentes y su estado</span></div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:4px;">
+      <div class="wire" style="padding:14px 16px; border-radius:16px;">
+        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#059669;margin-bottom:10px;font-weight:600;">✓ Fase 1 — mockup ya listo</div>
+        <ul style="font-size:11.5px;color:#334155;line-height:2;list-style:none;">
+          <li>📌 Veredicto card (FALSO / VERIFICADO / ENGAÑOSO)</li>
+          <li>📊 Score bar + fiabilidad general</li>
+          <li>💬 Tabs Resumen / NLP / Fuentes</li>
+          <li>📋 Afirmaciones detectadas (claims)</li>
+          <li>🔢 Stats de plataforma (header)</li>
+          <li>🔍 Barra de búsqueda compacta</li>
+        </ul>
+      </div>
+      <div class="wire" style="padding:14px 16px; border-radius:16px;">
+        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:#B45309;margin-bottom:10px;font-weight:600;">⚡ Fase 2 — requiere backend</div>
+        <ul style="font-size:11.5px;color:#334155;line-height:2;list-style:none;">
+          <li>🤖 Narrativa LLM (Claude / OpenAI API)</li>
+          <li>🛰️ Mapa GEE con capas NDSI/NDVI</li>
+          <li>📚 Artículos journals (Semantic Scholar)</li>
+          <li>🔗 PyTrends — tendencias de búsqueda</li>
+          <li>🌡️ Datos Copernicus en tiempo real</li>
+          <li>🗄️ Historial persistente (DB)</li>
+        </ul>
+      </div>
+    </div>
+
+  </div><!-- /content-area -->
+</div><!-- /page-wrapper -->
+</div><!-- /outer-bg -->
+</body>
+</html>
