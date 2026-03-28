@@ -1,0 +1,7 @@
+# ⚠️ NUNCA subir a GitHub
+credentials.json
+.env
+__pycache__/
+*.pyc
+.venv/
+venv/
