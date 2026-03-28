@@ -241,16 +241,26 @@ html, body {
 .topbar-nav  { display: flex; gap: 32px; height: 100%; }
 .topbar-live { display: flex; align-items: center; gap: 8px; }
 
+/* Helpers responsive — estado base (desktop) */
+.mobile-only  { display: none; }   /* oculto en desktop, visible en móvil */
+.desktop-only { display: block; }  /* visible en desktop, oculto en móvil */
+
 @media (max-width: 768px) {
   /* Grid colapsa a una sola columna */
   .results-grid {
     grid-template-columns: 1fr;
   }
 
-  /* Columna derecha (panel de fuentes/satélite) aparece al final, sin sticky */
+  /* Columna derecha: sin sticky en móvil, fluye normal al final */
   .results-right-col {
     position: static !important;
   }
+
+  /* Helpers para mostrar/ocultar elementos según breakpoint */
+  /* .mobile-only  → solo visible en móvil  */
+  /* .desktop-only → solo visible en desktop */
+  .mobile-only  { display: block !important; }
+  .desktop-only { display: none  !important; }
 
   /* Topbar: sólo logo + hamburger */
   .topbar-nav,

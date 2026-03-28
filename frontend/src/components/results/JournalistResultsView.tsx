@@ -779,6 +779,11 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
             )}
           </div>
 
+          {/* ── SOURCES TRIGGER (móvil): visible solo en pantallas pequeñas ─── */}
+          <div className="mobile-only">
+            <SourcesTrigger sources={sources} onOpen={() => setSourcesOpen(true)} />
+          </div>
+
           {/* ── NARRATIVE — Perplexity-style, data-dense with citations ─────── */}
           <div style={{ ...floatCard, padding: '22px 28px' }}>
             <SectionLabel icon={Brain}>Analysis</SectionLabel>
@@ -945,8 +950,10 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
         {/* ════════ COLUMNA DERECHA ════════ */}
         <div className="results-right-col" style={{ position: 'sticky', top: '72px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
 
-          {/* ── SOURCES TRIGGER — top of sidebar, opens right-side drawer ──── */}
-          <SourcesTrigger sources={sources} onOpen={() => setSourcesOpen(true)} />
+          {/* ── SOURCES TRIGGER (desktop): oculto en móvil, ya está en col. izquierda ── */}
+          <div className="desktop-only">
+            <SourcesTrigger sources={sources} onOpen={() => setSourcesOpen(true)} />
+          </div>
 
           {/* Quick satellite stats */}
           <div style={{ ...floatCard, padding: '18px 20px' }}>

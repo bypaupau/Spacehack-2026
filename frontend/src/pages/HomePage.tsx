@@ -79,7 +79,7 @@ export function HomePage({ externalResult, onClearExternal }: HomePageProps) {
                 }}
               >
                 <p className="font-label text-[10px] mb-1" style={{ color: '#DC2626' }}>
-                  Error al analizar
+                  Analysis error
                 </p>
                 <p style={{ color: '#64748B', fontSize: '13px', fontFamily: "'IBM Plex Sans', sans-serif" }}>
                   {error}

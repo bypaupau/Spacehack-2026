@@ -42,12 +42,12 @@ export function LoadingSpinner() {
             fontFamily: "'Playfair Display', serif", fontSize: '22px', fontWeight: 700,
             color: '#0F172A', marginBottom: '8px', lineHeight: 1.2
           }}>
-            Analizando contenido
+            Analysing content
           </h3>
           <p style={{
             fontFamily: "system-ui, sans-serif", fontSize: '13px', color: '#64748B', marginBottom: '24px'
           }}>
-            Comparando con registros satelitales en tiempo real
+            Cross-referencing with real-time satellite records
           </p>
 
           {/* Pasos animados */}

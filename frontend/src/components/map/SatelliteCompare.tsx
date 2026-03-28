@@ -415,7 +415,7 @@ function ImagePanel({
             }}>
               <Loader2 size={18} color="#334155" style={{ animation: 'spin 1s linear infinite' }} />
               <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', color: '#334155' }}>
-                Cargando NASA GIBS…
+                Loading NASA GIBS…
               </span>
             </div>
           )}

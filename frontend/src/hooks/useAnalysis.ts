@@ -33,7 +33,7 @@ export function useAnalysis(): UseAnalysisReturn {
       setAnalysis(res.data)
       setState('success')
     } else {
-      setError(res.error ?? 'Error desconocido al analizar el contenido.')
+      setError(res.error ?? 'Unknown error while analysing content.')
       setState('error')
     }
   }, [])
