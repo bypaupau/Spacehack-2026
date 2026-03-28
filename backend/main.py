@@ -45,8 +45,7 @@ def analyze(body: AnalyzeRequest):
         )
 
         # Simulación de tu chart builder
-        chart_data_base64 = "data:image/png;base64,..."
-
+chart_data_base64 = generate_trend_chart_base64(claim_type, location_name)
         # 3. Categorización Rigurosa y Efecto Cascada Alpino
         verdict = "INVERIFICABLE"
         humanitarian_angle = ""

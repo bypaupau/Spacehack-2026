@@ -111,15 +111,41 @@ export function SatelliteCompare({
   const [errMsg,   setErrMsg]   = useState('')
   const [expanded, setExpanded] = useState<'before'|'after'|null>(null)
 
-  useEffect(() => {
-    if (!claimText) return
-    setStatus('loading')
-    setEvidence(null)
-    getSatelliteEvidence(claimText, location, beforeYear, afterYear).then(res => {
-      if (res.ok && res.data) { setEvidence(res.data); setStatus('ok') }
-      else { setErrMsg(res.error ?? 'Error'); setStatus('error') }
-    })
-  }, [claimText, location, beforeYear, afterYear])
+    useEffect(() => {
+        if (!claimText) return
+
+        // 1. Forzamos el estado a 'ok' sin esperar al backend
+        setStatus('ok')
+
+        // 2. Simulamos la respuesta del API usando tus datos locales
+        // @ts-ignore
+        // @ts-ignore
+        setEvidence({
+            claim_type: 'glacier',
+            years: { before: beforeYear, after: afterYear },
+
+            // Rutas basadas en tu mockAnalyses.ts (asegúrate de que estén en public/satellite/)
+            before_url: '/satellite/Triftsee Lago 1990.jpg',
+            after_url: '/satellite/Triftsee Lago 2025.jpg',
+
+            location: { lat: 46.52, lon: 8.05 },
+            context_note: 'Comparación satelital histórica.',
+
+            // 3. Propiedades faltantes para resolver el error TS2345:
+            layer: 'MODIS_Terra_CorrectedReflectance_TrueColor',
+            dataset: 'NASA GIBS',
+            palette_info: {}
+        })
+
+        /* ── CÓDIGO ORIGINAL COMENTADO PARA EVITAR EL LLAMADO AL API ──
+        setStatus('loading')
+        setEvidence(null)
+        getSatelliteEvidence(claimText, location, beforeYear, afterYear).then(res => {
+          if (res.ok && res.data) { setEvidence(res.data); setStatus('ok') }
+          else { setErrMsg(res.error ?? 'Error'); setStatus('error') }
+        })
+        */
+    }, [claimText, location, beforeYear, afterYear])
 
   // ── Loading ─────────────────────────────────────────────────────────────────
   if (status === 'idle' || status === 'loading') {
