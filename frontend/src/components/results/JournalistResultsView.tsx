@@ -16,7 +16,7 @@ import {
   Brain, BookOpen, FileSearch, Newspaper,
   ExternalLink, AlertTriangle, CheckCircle2, AlertCircle, Clock,
   Layers, ArrowLeft, ArrowRight, Satellite, Repeat2, Heart, MessageCircle,
-  ArrowUp, ChevronLeft, ChevronRight, PlayCircle, X, type LucideIcon
+  ArrowUp, ChevronLeft, ChevronRight, PlayCircle, X, ThumbsUp, ThumbsDown, type LucideIcon
 } from 'lucide-react'
 import type { Analysis, VerdictType, SourceCardData } from '../../types'
 import { SatelliteMap }     from '../map/SatelliteMap'
@@ -615,12 +615,12 @@ function CitizenTrustPoll({ analysisId }: { analysisId: string }) {
               borderRadius: '8px', cursor: 'pointer',
               fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '14px',
               fontWeight: 700, color: '#1D4ED8',
-              transition: 'all 0.15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+              transition: 'all 0.15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '7px',
             }}
             onMouseEnter={e => { const el = e.currentTarget; el.style.background = '#1D4ED8'; el.style.color = '#FFFFFF' }}
             onMouseLeave={e => { const el = e.currentTarget; el.style.background = '#FFFFFF'; el.style.color = '#1D4ED8' }}
           >
-            👍 Sí
+            <ThumbsUp size={15} strokeWidth={2} /> Sí
           </button>
           <button
             onClick={() => handleVote('no')}
@@ -630,12 +630,12 @@ function CitizenTrustPoll({ analysisId }: { analysisId: string }) {
               borderRadius: '8px', cursor: 'pointer',
               fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '14px',
               fontWeight: 600, color: '#4A5A72',
-              transition: 'all 0.15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+              transition: 'all 0.15s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '7px',
             }}
             onMouseEnter={e => { const el = e.currentTarget; el.style.background = '#F8FAFC'; el.style.borderColor = '#94A3B8' }}
             onMouseLeave={e => { const el = e.currentTarget; el.style.background = '#FFFFFF'; el.style.borderColor = '#CBD5E1' }}
           >
-            👎 No
+            <ThumbsDown size={15} strokeWidth={2} /> No
           </button>
         </div>
       ) : (
@@ -648,8 +648,8 @@ function CitizenTrustPoll({ analysisId }: { analysisId: string }) {
           {/* Yes bar */}
           <div style={{ marginBottom: '8px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-              <span style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '12px', fontWeight: vote === 'yes' ? 700 : 500, color: vote === 'yes' ? '#1D4ED8' : '#4A5A72' }}>
-                👍 Sí {vote === 'yes' && '← tu voto'}
+              <span style={{ display: 'flex', alignItems: 'center', gap: '5px', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '12px', fontWeight: vote === 'yes' ? 700 : 500, color: vote === 'yes' ? '#1D4ED8' : '#4A5A72' }}>
+                <ThumbsUp size={11} strokeWidth={2} /> Sí {vote === 'yes' && '· tu voto'}
               </span>
               <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', fontWeight: 700, color: '#1D4ED8' }}>{yesPct}%</span>
             </div>
@@ -661,8 +661,8 @@ function CitizenTrustPoll({ analysisId }: { analysisId: string }) {
           {/* No bar */}
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-              <span style={{ fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '12px', fontWeight: vote === 'no' ? 700 : 500, color: vote === 'no' ? '#4A5A72' : '#94A3B8' }}>
-                👎 No {vote === 'no' && '← tu voto'}
+              <span style={{ display: 'flex', alignItems: 'center', gap: '5px', fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '12px', fontWeight: vote === 'no' ? 700 : 500, color: vote === 'no' ? '#4A5A72' : '#94A3B8' }}>
+                <ThumbsDown size={11} strokeWidth={2} /> No {vote === 'no' && '· tu voto'}
               </span>
               <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', fontWeight: 700, color: '#94A3B8' }}>{noPct}%</span>
             </div>
@@ -927,9 +927,6 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
             </div>
           </div>
 
-          {/* ── SOURCES TRIGGER — opens right-side drawer ────────────────────── */}
-          <SourcesTrigger sources={sources} onOpen={() => setSourcesOpen(true)} />
-
           {/* ── RELATED MEDIA ────────────────────────────────────────────────── */}
           {relatedMedia && relatedMedia.length > 0 && (
             <RelatedMediaSection items={relatedMedia} />
@@ -945,6 +942,9 @@ export function JournalistResultsView({ analysis, onBack }: { analysis: Analysis
 
         {/* ════════ COLUMNA DERECHA ════════ */}
         <div style={{ position: 'sticky', top: '72px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+
+          {/* ── SOURCES TRIGGER — top of sidebar, opens right-side drawer ──── */}
+          <SourcesTrigger sources={sources} onOpen={() => setSourcesOpen(true)} />
 
           {/* Quick satellite stats */}
           <div style={{ ...floatCard, padding: '18px 20px' }}>

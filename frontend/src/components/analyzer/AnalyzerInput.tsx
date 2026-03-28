@@ -9,6 +9,40 @@ import { Logo } from '../ui/Logo'
 import { PLATFORM_STATS } from '../../data/mockAnalyses'
 import type { InputMode } from '../../types'
 
+// ── Validation ────────────────────────────────────────────────────────────────
+function getValidationError(val: string, mode: InputMode, platform: string): string | null {
+  const trimmed = val.trim()
+  if (!trimmed) return null // empty → button disabled handles it
+
+  if (mode === 'article') {
+    const isUrl = /^https?:\/\/.{4,}/i.test(trimmed)
+    if (!isUrl) return 'Pega una URL válida que empiece por https://…'
+  }
+
+  if (mode === 'social') {
+    const validDomains = platform === 'reddit'
+      ? /https?:\/\/(www\.)?reddit\.com\//i
+      : /https?:\/\/(www\.)?(twitter\.com|x\.com)\//i
+    if (!validDomains.test(trimmed)) {
+      return platform === 'reddit'
+        ? 'Pega un enlace de Reddit (reddit.com/r/…)'
+        : 'Pega un enlace de X / Twitter (x.com o twitter.com)'
+    }
+  }
+
+  if (mode === 'statement') {
+    if (trimmed.length < 12) return 'La afirmación debe tener al menos 12 caracteres'
+    // Detect obvious gibberish: no vowels, no spaces, all non-word chars
+    const vowels   = /[aeiouáéíóúüAEIOUÁÉÍÓÚÜ]/
+    const hasSpace = trimmed.includes(' ')
+    if (!vowels.test(trimmed) && !hasSpace) {
+      return 'Por favor, escribe una afirmación real para verificar'
+    }
+  }
+
+  return null
+}
+
 interface AnalyzerInputProps {
   onSubmit:  (input: string, mode?: InputMode, platform?: string) => void
   disabled?: boolean
@@ -69,21 +103,54 @@ function ModePill({
 }
 
 export function AnalyzerInput({ onSubmit, disabled, compact }: AnalyzerInputProps) {
-  const [value,    setValue]    = useState('')
-  const [mode,     setMode]     = useState<InputMode>('statement')
-  const [platform, setPlatform] = useState<'twitter' | 'reddit'>('twitter')
+  const [value,       setValue]       = useState('')
+  const [mode,        setMode]        = useState<InputMode>('statement')
+  const [platform,    setPlatform]    = useState<'twitter' | 'reddit'>('twitter')
+  const [inputError,  setInputError]  = useState<string | null>(null)
+  const [showError,   setShowError]   = useState(false)
 
   const currentMode = MODES.find(m => m.id === mode)!
 
-  const handleSubmit = () => {
-    if (value.trim() && !disabled) {
-      onSubmit(value.trim(), mode, mode === 'social' ? platform : undefined)
+  // Clear error when user types
+  const handleChange = (val: string) => {
+    setValue(val)
+    if (showError) {
+      const err = getValidationError(val, mode, platform)
+      setInputError(err)
+      if (!err) setShowError(false)
     }
+  }
+
+  // Clear error on mode/platform switch
+  const handleModeChange = (m: InputMode) => {
+    setMode(m)
+    setInputError(null)
+    setShowError(false)
+  }
+  const handlePlatformChange = (p: 'twitter' | 'reddit') => {
+    setPlatform(p)
+    setInputError(null)
+    setShowError(false)
+  }
+
+  const handleSubmit = () => {
+    if (!value.trim() || disabled) return
+    const err = getValidationError(value, mode, platform)
+    if (err) {
+      setInputError(err)
+      setShowError(true)
+      return
+    }
+    setInputError(null)
+    setShowError(false)
+    onSubmit(value.trim(), mode, mode === 'social' ? platform : undefined)
   }
 
   const handleKey = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') handleSubmit()
   }
+
+  const errorBorder = showError && inputError ? '1.5px solid #EF4444' : undefined
 
   // ── COMPACT mode ─────────────────────────────────────────────────────────────
   if (compact) {
@@ -96,39 +163,46 @@ export function AnalyzerInput({ onSubmit, disabled, compact }: AnalyzerInputProp
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', maxWidth: '580px' }}>
-          {/* Mode pills — compact (sin sub-pills de plataforma: ya se seleccionó al enviar) */}
+          {/* Mode pills — compact */}
           <div style={{ display: 'flex', gap: '6px' }}>
             {MODES.map(m => (
-              <ModePill key={m.id} mode={m} active={mode === m.id} onClick={() => setMode(m.id)} />
+              <ModePill key={m.id} mode={m} active={mode === m.id} onClick={() => handleModeChange(m.id)} />
             ))}
           </div>
 
           {/* Input row */}
-          <div className="flex gap-2">
-            <div className="relative flex-1">
-              <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" width="13" height="13" viewBox="0 0 15 15" fill="none">
-                <circle cx="6.5" cy="6.5" r="5" stroke="#94A3B8" strokeWidth="1.4"/>
-                <line x1="10.5" y1="10.5" x2="14" y2="14" stroke="#94A3B8" strokeWidth="1.4" strokeLinecap="round"/>
-              </svg>
-              <input
-                className="pl-9 text-sm"
-                style={{
-                  width: '100%', padding: '10px 14px 10px 34px',
-                  borderRadius: '6px', border: '1.5px solid #E2E8F0',
-                  outline: 'none', fontFamily: "'IBM Plex Sans', sans-serif", color: '#0F172A',
-                  fontSize: '13px',
-                }}
-                type="text"
-                placeholder={currentMode.placeholder}
-                value={value}
-                onChange={e => setValue(e.target.value)}
-                onKeyDown={handleKey}
-                disabled={disabled}
-              />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" width="13" height="13" viewBox="0 0 15 15" fill="none">
+                  <circle cx="6.5" cy="6.5" r="5" stroke="#94A3B8" strokeWidth="1.4"/>
+                  <line x1="10.5" y1="10.5" x2="14" y2="14" stroke="#94A3B8" strokeWidth="1.4" strokeLinecap="round"/>
+                </svg>
+                <input
+                  className="pl-9 text-sm"
+                  style={{
+                    width: '100%', padding: '10px 14px 10px 34px',
+                    borderRadius: '6px', border: errorBorder ?? '1.5px solid #E2E8F0',
+                    outline: 'none', fontFamily: "'IBM Plex Sans', sans-serif", color: '#0F172A',
+                    fontSize: '13px', transition: 'border-color 0.15s',
+                  }}
+                  type="text"
+                  placeholder={currentMode.placeholder}
+                  value={value}
+                  onChange={e => handleChange(e.target.value)}
+                  onKeyDown={handleKey}
+                  disabled={disabled}
+                />
+              </div>
+              <button className="btn-primary" onClick={handleSubmit} disabled={disabled || !value.trim()}>
+                {disabled ? '…' : '→'}
+              </button>
             </div>
-            <button className="btn-primary" onClick={handleSubmit} disabled={disabled || !value.trim()}>
-              {disabled ? '…' : '→'}
-            </button>
+            {showError && inputError && (
+              <p style={{ margin: 0, fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '11px', color: '#EF4444', paddingLeft: '2px' }}>
+                {inputError}
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -186,7 +260,7 @@ export function AnalyzerInput({ onSubmit, disabled, compact }: AnalyzerInputProp
       >
         <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', flexWrap: 'wrap' }}>
           {MODES.map(m => (
-            <ModePill key={m.id} mode={m} active={mode === m.id} onClick={() => setMode(m.id)} />
+            <ModePill key={m.id} mode={m} active={mode === m.id} onClick={() => handleModeChange(m.id)} />
           ))}
         </div>
 
@@ -204,7 +278,7 @@ export function AnalyzerInput({ onSubmit, disabled, compact }: AnalyzerInputProp
             {SOCIAL_PLATFORMS.map(p => (
               <button
                 key={p.id}
-                onClick={() => setPlatform(p.id)}
+                onClick={() => handlePlatformChange(p.id)}
                 style={{
                   display: 'inline-flex', alignItems: 'center',
                   padding: '4px 14px', borderRadius: '20px',
@@ -231,15 +305,18 @@ export function AnalyzerInput({ onSubmit, disabled, compact }: AnalyzerInputProp
           style={{
             display: 'flex', gap: '8px', padding: '6px',
             background: '#FFFFFF', borderRadius: '10px',
-            border: '1.5px solid #E2E8F0', boxShadow: '0 4px 16px rgba(15,23,42,0.06)',
+            border: showError && inputError ? '1.5px solid #EF4444' : '1.5px solid #E2E8F0',
+            boxShadow: showError && inputError ? '0 0 0 3px rgba(239,68,68,0.10)' : '0 4px 16px rgba(15,23,42,0.06)',
             transition: 'border-color 0.2s, box-shadow 0.2s',
           }}
           onFocusCapture={e => {
+            if (showError && inputError) return
             const el = e.currentTarget as HTMLDivElement
             el.style.borderColor = '#0284C7'
             el.style.boxShadow   = '0 0 0 3px rgba(2,132,199,0.10), 0 4px 16px rgba(15,23,42,0.06)'
           }}
           onBlurCapture={e => {
+            if (showError && inputError) return
             const el = e.currentTarget as HTMLDivElement
             el.style.borderColor = '#E2E8F0'
             el.style.boxShadow   = '0 4px 16px rgba(15,23,42,0.06)'
@@ -254,7 +331,7 @@ export function AnalyzerInput({ onSubmit, disabled, compact }: AnalyzerInputProp
               type="text"
               placeholder={currentMode.placeholder}
               value={value}
-              onChange={e => setValue(e.target.value)}
+              onChange={e => handleChange(e.target.value)}
               onKeyDown={handleKey}
               disabled={disabled}
               style={{
@@ -290,6 +367,20 @@ export function AnalyzerInput({ onSubmit, disabled, compact }: AnalyzerInputProp
             ) : 'Verificar →'}
           </button>
         </div>
+
+        {/* Inline validation error */}
+        {showError && inputError && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '8px', padding: '8px 12px', background: '#FEF2F2', borderRadius: '7px', border: '1px solid #FECACA' }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+              <circle cx="12" cy="12" r="10" stroke="#EF4444" strokeWidth="2"/>
+              <line x1="12" y1="8" x2="12" y2="12" stroke="#EF4444" strokeWidth="2" strokeLinecap="round"/>
+              <circle cx="12" cy="16" r="0.8" fill="#EF4444" stroke="#EF4444" strokeWidth="1.5"/>
+            </svg>
+            <p style={{ margin: 0, fontFamily: "'IBM Plex Sans', sans-serif", fontSize: '12px', color: '#B91C1C', fontWeight: 500 }}>
+              {inputError}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Stat pills */}
