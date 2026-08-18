@@ -1,137 +1,162 @@
-# 🏔️ Peak News — Alpine Fact-Checker
+# Peak News
 
-> **Space Hack 2026** · AI-powered collaborative fact-checking platform using Earth Observation data from the Alps.
+**An Alpine fact-checker that verifies climate claims against 35 years of satellite record.**
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-spacehack--2026.vercel.app-blue?style=flat-square)](https://spacehack-2026.vercel.app)
-[![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react)](https://react.dev)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688?style=flat-square&logo=fastapi)](https://fastapi.tiangolo.com)
-[![Google Earth Engine](https://img.shields.io/badge/Google%20Earth%20Engine-Sentinel--2%20%2F%20Landsat%208-4285F4?style=flat-square&logo=google)](https://earthengine.google.com)
+[![Live demo](https://img.shields.io/badge/demo-spacehack--2026.vercel.app-1D4ED8?style=flat-square)](https://spacehack-2026.vercel.app)
+[![React](https://img.shields.io/badge/React_18-informational?style=flat-square&color=444)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-informational?style=flat-square&color=444)](https://www.typescriptlang.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-informational?style=flat-square&color=444)](https://fastapi.tiangolo.com)
+[![Google Earth Engine](https://img.shields.io/badge/Google_Earth_Engine-informational?style=flat-square&color=444)](https://earthengine.google.com)
+[![License: MIT](https://img.shields.io/badge/license-MIT-444?style=flat-square)](#license)
 
----
-
-## What is Peak News?
-
-Peak News is a journalistic infrastructure tool for **fact-checking climate claims about the Alps**. It takes a news statement, article URL, or social media post and cross-references it against:
-
-- 🛰️ **Real satellite imagery** — Sentinel-2 (ESA) and Landsat 8/9 (USGS) via Google Earth Engine
-- 📊 **Statistical analysis** — GEE-generated glacier retreat and snow coverage data
-- 📚 **Peer-reviewed literature** — Semantic Scholar, IPCC AR6, Nature Climate Change, WMO
-
-Every analysis produces a **rigorous three-state verdict**:
-
-| Verdict | Meaning |
-|---|---|
-| ✅ **Verified** | Backed by satellite evidence and scientific consensus |
-| ⚠️ **Misleading** | Partially true but omits critical context |
-| ❌ **False** | Directly contradicts satellite and scientific evidence |
+![Peak News home screen](img/peaknews-menu.png)
 
 ---
 
-## Key Features
+## The problem
 
-**For journalists:**
-- Submit a statement, article URL, or social post (Twitter/X, Reddit)
-- Get a Perplexity-style report with inline citations `[1]` `[2]` `[3]`
-- Interactive before/after satellite imagery comparison (1990 vs 2025)
-- Exportable `<iframe>` embed code — paste directly into any digital newspaper
-- Citizen trust micro-survey: *"Did this satellite image change your perception?"*
+Claims about Alpine glaciers travel faster than the science that could confirm or debunk them. *"Swiss glaciers are growing thanks to record polar cold."* *"You can no longer ski in the Alps."* Both circulate widely; both are checkable against public satellite archives. But a journalist on deadline has no practical way to query Landsat and Sentinel-2, run the statistics, find the relevant literature, and turn all of it into something publishable — not in the twenty minutes they actually have.
 
-**Under the hood:**
-- NLP narrative classification (denial / minimisation / delayism scoring)
-- Real GEE charts: annual trend, decade average, anomaly vs baseline
-- Keyword detection highlighting climate disinformation signals
-- Truthfulness scale with confidence score (0–100)
+**Peak News closes that gap.** Paste a statement, an article URL, or a social post. The tool returns a verdict grounded in Google Earth Engine imagery, a set of derived statistical charts, an NLP breakdown of the misinformation pattern being used, and an `<iframe>` embed the newsroom can drop straight into the published piece.
+
+Built in 48 hours for **Space Hack 2026**.
 
 ---
 
-## Screenshots
+## Walkthrough
 
-| Home | Verified Result | False Result |
+### Verdict, at a glance
+
+The result view leads with the verdict and a confidence score on a 0–100 scale, then the numbers that produced it. The right rail stays pinned throughout: satellite indicators, keywords flagged by the NLP pass, and the position of this claim on the truthfulness scale.
+
+![Analysis result with verdict, key metrics and satellite indicators](img/peaknews-overview.png)
+
+### Satellite evidence
+
+Before/after imagery pulled from Google Earth Engine for the specific location the claim refers to, with the band composition and palette spelled out so the reader can tell snow from exposed rock from meltwater. Both frames are downloadable and expand on click.
+
+![Before/after satellite comparison from Google Earth Engine](img/peaknews-gee-map.png)
+
+### Statistical analysis
+
+The imagery alone doesn't settle anything — a single warm summer is not a trend. Each analysis ships with the GEE-derived chart series behind it: annual trend with regression line, net change against baseline, decade averages, anomaly vs. historical baseline, and year-on-year variability. Every chart is annotated in plain language explaining what it does and does not prove.
+
+![GEE statistical charts with plain-language annotations](img/peanews-data-graphics.png)
+
+Long-run series are cross-checked against GLAMOS glacier mass balance records, and the analysed location is pinned on a Sentinel-2 basemap.
+
+![Historical GLAMOS series and location map](img/peaknews-datagraphics2.png)
+
+### Narrative analysis
+
+Beyond true/false, the tool characterises *how* a claim misleads. Three patterns are scored independently — direct denial, minimisation, and delayism — and the individual claims extracted from the source text are listed so the journalist can see exactly what is being asserted.
+
+![NLP narrative analysis, detected claims and related coverage](img/peaknews-accuracy-info.png)
+
+### Publishing
+
+Related coverage from WMO, NASA Goddard, BBC Science and others sits alongside a copy-paste `<iframe>` widget, so a verified fact-check can be embedded in a digital publication without rebuilding it.
+
+![Related media and the embeddable iframe widget](img/peaknews-other-sources.png)
+
+---
+
+## Verdict scale
+
+Scoring follows IFCN-style thresholds, weighted across three inputs: consistency with satellite data (40%), support in peer-reviewed literature (35%), and NLP narrative analysis (25%).
+
+| Verdict | Score | Meaning |
 |---|---|---|
-| Submit a claim | Before/after satellite evidence | Verdict + disinformation signals |
+| Verified | ≥ 80 | Backed by satellite evidence and scientific consensus |
+| Mostly true | 50–79 | Directionally correct, with caveats |
+| Misleading | 30–49 | Partially true but omits context that changes the conclusion |
+| False | < 30 | Contradicted by satellite and scientific evidence |
 
 ---
 
-## Tech Stack
-
-### Frontend
-| Tool | Purpose |
-|---|---|
-| React 18 + Vite | UI framework |
-| TypeScript | Type safety |
-| Tailwind CSS | Styling (Soft Alpine Pastel design system) |
-| Recharts | Time-series snow coverage charts |
-| Lucide React | Icons |
-| React Router | Navigation |
-
-### Backend
-| Tool | Purpose |
-|---|---|
-| Python + FastAPI | REST API |
-| Google Earth Engine API | Satellite imagery + statistical analysis |
-| OpenAI / Claude API | NLP claim analysis |
-| Semantic Scholar | Scientific literature search |
-| python-dotenv | Environment configuration |
-
-### Data Sources
-| Source | Type | Reliability |
-|---|---|---|
-| Sentinel-2 (ESA) | Optical satellite · 10m resolution | 97% |
-| Landsat 8/9 (USGS) | Multispectral satellite · 30m resolution | 95% |
-| GLAMOS Switzerland | Glacier monitoring network | 99% |
-| MeteoSwiss | Meteorological data | 96% |
-| IPCC AR6 | Peer-reviewed scientific report | 100% |
-| Semantic Scholar | Scientific literature index | 88% |
-
----
-
-## Project Structure
+## How it works
 
 ```
-Ibilens/
-├── frontend/                  # React + Vite app
+claim (text · article URL · social post)
+        │
+        ├─ 1. Claim extraction and typing → glacier | snow | temperature
+        │
+        ├─ 2. Location resolution → Alpine coordinate lookup
+        │
+        ├─ 3. Google Earth Engine query
+        │      Landsat 8/9 (30 m) + Sentinel-2 (10 m)
+        │      NDSI snow indices · glacier area series · temporal composites
+        │
+        ├─ 4. Cross-reference against indexed literature
+        │      GLAMOS · IPCC AR6 · WGMS · Hugonnet et al. 2021 · Matiu et al. 2021
+        │
+        ├─ 5. NLP narrative scoring → denial / minimisation / delayism
+        │
+        └─ 6. Verdict + confidence + embeddable widget
+```
+
+---
+
+## Tech stack
+
+**Frontend** — React 18, TypeScript, Vite, Tailwind CSS (custom "Soft Alpine" design system), Recharts for time series, Leaflet + react-leaflet for the location map, Lucide for icons. Deployed on Vercel.
+
+**Backend** — Python, FastAPI, Uvicorn. `earthengine-api` for satellite queries and thumbnail generation, Matplotlib for server-side trend charts, a curated local index of peer-reviewed papers for the literature layer.
+
+**Geospatial processing** — Google Earth Engine scripts and Jupyter notebooks per region (Austria, France, Italy, Switzerland), exporting GeoTIFFs, hectare time series as CSV, and a fixed set of ten analysis charts per site.
+
+---
+
+## Data sources
+
+| Source | Type | Role |
+|---|---|---|
+| Sentinel-2 (ESA) | Optical satellite · 10 m | Recent imagery, snow/ice discrimination |
+| Landsat 8/9 (USGS) | Multispectral · 30 m | Long baseline back to the 1990s |
+| GLAMOS | Swiss glacier monitoring, field data since 1879 | Ground truth for mass balance |
+| WGMS / WMO | Global Glacier Change Bulletin | Global context |
+| Copernicus C3S / ERA5 | Climate reanalysis | Temperature and snow cover |
+| IPCC AR6 | Peer-reviewed assessment | Consensus reference |
+
+---
+
+## Project structure
+
+```
+.
+├── frontend/                    React + Vite app
 │   ├── public/
-│   │   ├── satellite/         # Real GEE satellite images (JPG)
-│   │   └── charts/            # GEE statistical analysis charts (PNG)
-│   │       ├── austria/
-│   │       ├── france/
-│   │       ├── italy/
-│   │       └── switzerland/
+│   │   ├── satellite/           GEE-exported imagery
+│   │   └── charts/              per-region statistical charts
 │   └── src/
 │       ├── components/
-│       │   ├── layout/        # Navbar, page shell
-│       │   ├── map/           # SatelliteCompare, SatelliteMap, TrendChart
-│       │   ├── results/       # JournalistResultsView, tabs (Satellite, NLP, Sources)
-│       │   └── ui/            # Logo, LoadingSpinner, shared primitives
-│       ├── data/
-│       │   └── mockAnalyses.ts  # Phase 1 mock data (8 real demo cases)
-│       ├── pages/             # VerifyPage, SourcesPage, MethodologyPage
-│       ├── services/          # api.ts — connects to FastAPI backend
-│       └── types/             # Core TypeScript interfaces
-├── backend/                   # FastAPI + GEE
-│   ├── main.py                # API endpoints
-│   ├── gee_service.py         # Google Earth Engine integration
-│   ├── chart_service.py       # GEE chart generation
-│   └── journal_service.py     # Scientific literature search
-├── PeakNews Graphics/         # Raw GEE exports (TIF + JPG per region)
-│   ├── Austria/               # Lago Pasterze, Tirol Ötztal
-│   ├── Francia/               # Mont Blanc, Haute-Savoie
-│   ├── Italia/                # Torino snow persistence
-│   └── Suiza/                 # Aletsch, Triftsee
-└── vercel.json                # Vercel deployment config
+│       │   ├── layout/          Topbar, CollapsibleSidebar
+│       │   ├── map/             SatelliteCompare, SatelliteMap, TrendChart
+│       │   ├── results/         JournalistResultsView + tabs
+│       │   └── ui/              Logo, ScoreBar, VerdictBadge, primitives
+│       ├── data/mockAnalyses.ts 8 fully-built demo cases
+│       ├── services/api.ts      backend interface layer
+│       └── types/               shared TypeScript interfaces
+├── backend/                     FastAPI service
+│   ├── main.py                  /api/analyze endpoint
+│   ├── gee_service.py           Earth Engine init, location + claim resolution
+│   ├── chart_service.py         Matplotlib trend charts (base64)
+│   └── journal_service.py       indexed scientific literature
+├── PeakNews Graphics/           raw GEE work per region
+│   ├── Austria/                 Pasterze, Tirol Ötztal
+│   ├── Francia/                 Mont Blanc, Haute-Savoie
+│   ├── Italia/                  Torino snow persistence
+│   └── Suiza/                   Aletsch, Triftsee
+└── img/                         README screenshots
 ```
 
 ---
 
-## Getting Started
+## Running it locally
 
-### Prerequisites
-- Node.js 18+
-- Python 3.11+
-- Google Earth Engine account with service account credentials
-- OpenAI or Anthropic API key
+**Requirements:** Node.js 18+, Python 3.11+, and — for the backend — a Google Earth Engine service account.
 
-### Frontend (Phase 1 — fully working with mock data)
+### Frontend
 
 ```bash
 cd frontend
@@ -139,84 +164,65 @@ npm install
 npm run dev
 ```
 
-The app runs at `http://localhost:5173` with 8 pre-built demo cases covering real Alpine glacier data.
+Runs at `http://localhost:5173`. The demo works standalone: eight pre-built cases covering real Alpine glacier and snow data, each with its own GEE imagery and chart set.
 
-### Backend (Phase 2 — live GEE integration)
+### Backend
 
 ```bash
 cd backend
 python -m venv .venv
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
+pip install matplotlib             # required by chart_service.py
 ```
 
-Create a `.env` file in `/backend`:
+Create `backend/.env`:
 
 ```env
-OPENAI_API_KEY=sk-...
 GOOGLE_APPLICATION_CREDENTIALS=credentials.json
+# or, for deployment:
+# GEE_CREDENTIALS_JSON={"type":"service_account",...}
 ```
-
-Start the API:
 
 ```bash
 uvicorn main:app --reload
 ```
 
-API available at `http://localhost:8000`. Docs at `http://localhost:8000/docs`.
+API at `http://localhost:8000`, interactive docs at `/docs`.
 
 ---
 
-## Demo Cases
+## Project status
 
-The app ships with 8 pre-built real analysis cases:
+This is a hackathon prototype, and it's worth being precise about which parts are real:
 
-| Case | Type | Verdict |
-|---|---|---|
-| "Alpine glacier disappears overnight" | Statement | ❌ False |
-| "Mont Blanc loses 2m altitude due to melting" | Article URL | ✅ Verified |
-| "The Alps experience record snowfall" | Statement | ⚠️ Misleading |
-| "Swiss glaciers growing thanks to low temperatures" | Statement | ❌ False |
-| "Alpine ski tourism has not disappeared" | Statement | ⚠️ Misleading |
-| "Alpine glaciers growing thanks to record polar cold" | Article URL | ❌ False |
-| "Record snow in Switzerland 2025" | Reddit post | ⚠️ Misleading |
-| "Lake Pasterze GROWING" | Tweet @Kursed65936965 | ❌ False |
+**Real.** All satellite imagery and every statistical chart in the demo were generated from Google Earth Engine — real Landsat 8 and Sentinel-2 scenes over named Alpine sites, exported as GeoTIFF and processed into hectare time series. The GLAMOS figures, the cited papers, and the linked coverage are real. The eight demo cases are built on genuine data.
 
-All cases include real satellite imagery generated from Google Earth Engine scripts.
+**Prototype.** The frontend currently serves those eight pre-built analyses rather than calling the backend live — `services/api.ts` routes an input to the closest case and simulates latency. The FastAPI service exists and queries GEE, but is not yet wired to the UI.
 
----
+**Simplified.** Claim classification and location resolution are keyword-based, not model-based. The literature layer is a curated index of papers rather than a live Semantic Scholar query. No LLM is called at runtime.
 
-## Deployment
-
-The frontend is deployed on **Vercel** with automatic deploys from `main`.
-
-```bash
-# Vercel picks up vercel.json automatically
-git push origin main
-```
-
-Key `vercel.json` settings handle SPA routing so React Router works on all paths.
+Under a 48-hour constraint, the choice was to make the *evidence* real and the *plumbing* provisional, rather than the reverse.
 
 ---
 
 ## Roadmap
 
-- [x] Phase 1 — Frontend mockup with real GEE imagery
-- [x] Before/after satellite comparison viewer (click to expand)
-- [x] Journalist iframe embed widget
+- [x] GEE pipeline: imagery export and statistical series for four Alpine regions
+- [x] Journalist result view with satellite comparison, charts and NLP breakdown
+- [x] Embeddable `<iframe>` widget for digital publications
 - [x] Citizen trust micro-survey
-- [ ] Phase 2 — Live FastAPI backend connected to GEE
-- [ ] Real-time claim analysis via OpenAI/Claude
-- [ ] Italy (Torino) satellite data integration
-- [ ] User-submitted corrections & collaborative annotation
+- [ ] Wire the frontend to the live FastAPI backend
+- [ ] Replace keyword classification with model-based claim extraction
+- [ ] Live Semantic Scholar retrieval instead of the curated index
+- [ ] Integrate the Torino (Italy) dataset into the app
+- [ ] Collaborative annotation and user-submitted corrections
 
 ---
 
-## Team
+## Credits
 
-Built in under 48 hours for **Space Hack 2026** 🚀
-
----
+Built for **Space Hack 2026**. Satellite data courtesy of ESA Copernicus, USGS/NASA Landsat and Google Earth Engine. Glacier records from GLAMOS and WGMS.
 
 ## License
 
